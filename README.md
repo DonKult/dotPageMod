@@ -52,3 +52,44 @@ developing Firefox extensions…
 So, with a "how hard can it be?" I moved on to write my own extension to resolve
 my real as well as my imaginary problems by introducing new problems – not for
 me (hopefully), but potentially for anyone (else) wanting to use it…
+
+## Logo
+
+The logo is derived from Technology Class CSS3-Styling Icon which accompanies
+the official HTML5 Logo [HTML5 Logo](https://www.w3.org/html/logo/) by
+[W3C](https://www.w3.org/) under the
+[CC-BY-3](https://creativecommons.org/licenses/by/3.0/).
+
+The original is black – I am coloring the 'J' in this stylished 3 in yellow
+and the remaining 2 strokes in blue as JavaScript and CSS tend to be shown with
+those shield colors accompaning the HTML5 icon.  They are also the colors of
+the [SelfHTML](http://wiki.selfhtml.org) logo which was a happy accident
+through.
+
+Not very creative, I know, but it seemed better than using a gear or wrench…
+
+## License
+
+Appart from the logo, which is (also) licensed under the [Creative Commons
+Attribution 3.0](https://creativecommons.org/licenses/by/3.0/) as mentioned in
+the previous paragraph, the extension is MIT (Expat) licensed.
+
+	Copyright © 2016 David Kalnischkies <david@kalnischkies.de>
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy of
+	this software and associated documentation files (the "Software"), to deal in
+	the Software without restriction, including without limitation the rights to
+	use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+	of the Software, and to permit persons to whom the Software is furnished to do
+	so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
