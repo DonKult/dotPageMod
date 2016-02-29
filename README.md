@@ -17,6 +17,12 @@ to load local CSS and JavaScript into any webpages.
   specific scheme
 * your JavaScript/CSS works even if the page has them blocked by a _Content
   Security Policy_ or [uMatrix](https://github.com/gorhill/uMatrix)
+* your PageMods apply to the top window (not to frames) and apply to exisiting
+  pages on (re)load
+* on deactivation CSS sheets are automatically unapplied, JavaScript modifications
+  can be reverted by registering an undo method with `self.port.on("detach", revert);`
+* on Linux with inotifywait (packaged in Debian in _inotify-tools_) the addon
+  will reload automatically on relevant changes in the config directory
 
 ## (Better?) Alternatives
 
