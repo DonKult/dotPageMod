@@ -19,14 +19,27 @@ const loadPageMods = changes => {
 		curPageMods.forEach(mod => mod.destroy());
 		curPageMods = [];
 		console.info('loadPageMods triggered by', changes);
-		forEach(files.getFilesPerConfigSubDir(NAME, ['js', 'css']), (files, hostname) => {
+		const filesByDir = files.getFilesPerConfigSubDir(NAME, ['js', 'css']);
+		const framework = filesByDir.hasOwnProperty('FRAMEWORK') ? filesByDir.FRAMEWORK : {js: [], css: [] };
+		forEach(filesByDir, (files, hostname) => {
+			if (hostname === 'FRAMEWORK')
+				return;
 			const match = hostname2include(hostname);
-			console.log('hostname', hostname, 'matched with', match, 'gets a pagemod created with', files);
+			let jsfiles, cssfiles;
+			if (framework === undefined || files.js.length === 0)
+				jsfiles = files.js;
+			else
+				jsfiles = framework.js.concat(files.js);
+			if (framework === undefined || files.css.length === 0)
+				cssfiles = files.css;
+			else
+				cssfiles = framework.css.concat(files.css);
+			console.log('hostname', hostname, 'matched with', match, 'gets a pagemod created with', jsfiles, cssfiles);
 			curPageMods.push(PageMod({
 				include: match,
-				contentScriptFile: files.js,
+				contentScriptFile: jsfiles,
 				contentScriptWhen: 'ready',
-				contentStyleFile: files.css,
+				contentStyleFile: cssfiles,
 				attachTo: [ 'top', 'existing' ],
 				onAttach: worker => console.info('pagemod', hostname, 'attached to worker', worker.url.toString())
 			}));

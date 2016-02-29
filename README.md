@@ -15,6 +15,9 @@ to load local CSS and JavaScript into any webpages.
 * in fact: `org` matches all hosts in that top-level domain, too
 * `ALL` for all hosts (on http/https) or `ALL_scheme` for all hosts on a
   specific scheme
+  use `FRAMEWORK` directory to include any/all JavaScript/CSS frameworks (like
+  JQuery) you might want to use in your scripts – they are automatically
+  included before your scripts are sourced.
 * your JavaScript/CSS works even if the page has them blocked by a _Content
   Security Policy_ or [uMatrix](https://github.com/gorhill/uMatrix)
 * your PageMods apply to the top window (not to frames) and apply to exisiting
