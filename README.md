@@ -59,6 +59,22 @@ So, with a "how hard can it be?" I moved on to write my own extension to resolve
 my real as well as my imaginary problems by introducing new problems – not for
 me (hopefully), but potentially for anyone (else) wanting to use it…
 
+## Cheatsheet
+
+### [path-specific CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/@document)
+
+`@-moz-document url-prefix(http://www.w3.org/Style/) { }`
+`@-moz-document regex("https:.*") { }`
+
+### [path-specific JavaScript](https://developer.mozilla.org/en-US/docs/Web/API/Window/location)
+
+`if (window.location.pathname === '/Style/')`
+`if (window.location.pathname.startsWith('/Style/'))`
+
+### [revert JavaScript changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
+
+`self.port.on("detach", () => {});`
+
 ## Logo
 
 The logo is derived from Technology Class CSS3-Styling Icon which accompanies
