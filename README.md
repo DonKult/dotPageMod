@@ -2,7 +2,7 @@
 
 Firefox extension for user configuration powered
 [PageMods](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
-to load local CSS and JavaScript into any webpages.
+to load local CSS and JavaScript into webpages.
 
 ## Features
 
@@ -15,9 +15,10 @@ to load local CSS and JavaScript into any webpages.
 * in fact: `org` matches all hosts in that top-level domain, too
 * `ALL` for all hosts (on http/https) or `ALL_scheme` for all hosts on a
   specific scheme
-  use `FRAMEWORK` directory to include any/all JavaScript/CSS frameworks (like
+* use `FRAMEWORK` directory to include any/all JavaScript/CSS frameworks (like
   JQuery) you might want to use in your scripts – they are automatically
   included before your scripts are sourced.
+* scripts can show desktop notifications without WebAPI (see Cheatsheet)
 * your JavaScript/CSS works even if the page has them blocked by a _Content
   Security Policy_ or [uMatrix](https://github.com/gorhill/uMatrix)
 * your PageMods apply to the top window (not to frames) and apply to exisiting
@@ -36,9 +37,10 @@ to load local CSS and JavaScript into any webpages.
 
 ## So, why another one?
 
-A long while ago I was using Greasemonkey, but just hiding a few elements with
-it felt very daunting with all this metadata and editing in a browser window. I
-_regressed_ to using [Adblock Plus](https://adblockplus.org/) and later [uBlock
+A long while ago I was using [Greasemonkey](http://www.greasespot.net/), but
+just hiding a few elements with it felt very daunting with all this metadata
+and editing in a browser window. I _regressed_ to using [Adblock
+Plus](https://adblockplus.org/) and later [uBlock
 Origin](https://github.com/gorhill/uBlock) for cosmetic filtering and more and
 more to block the execution of JavaScript by default. Eventually I introduced
 [uMatrix](https://github.com/gorhill/uMatrix) with a rigit block-policy to the
@@ -46,8 +48,8 @@ mix which ended up leaving uBlock mostly jobless beside a bunch of cosmetic
 filters. Management of these isn't perfect through and sometimes you want more
 than just `display: none` – especially now that I had all of JavaScript blocked
 by default and some websites downright refuse to be usable without it (e.g.
-default collapsed infoboxes). So I moved my filters to ~/.css and started
-fixing up websites in ~/.js with [dotjs](https://github.com/rlr/dotjs-addon).
+default collapsed infoboxes). So I moved my filters to `~/.css` and started
+fixing up websites in `~/.js` with [dotjs](https://github.com/rlr/dotjs-addon).
 Quickly I ended up hitting issue [#27: console.log doesn't work from
 dotjs](https://github.com/rlr/dotjs-addon/issues/27) which I researched and
 after commenting researched even more. Set out to write a patch to have this
@@ -55,7 +57,7 @@ option set automatically I ended up changing other things as well until I
 realized that the architecture as-is wasn't to my liking (using a single global
 PageMod reading files dynamically and sending the content to be processed by
 eval (JS) and by DOM insertion (CSS) – the later failing in the event of a
-content policy forbidding inline CSS) and I always wanted to look into
+content policy forbidding inline CSS) – and I always wanted to look into
 developing Firefox extensions…
 
 So, with a "how hard can it be?" I moved on to write my own extension to resolve
@@ -77,6 +79,17 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 ### [revert JavaScript changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
 
 `self.port.on("detach", () => {});`
+
+### showing desktop notifications
+
+`self.port.emit("dotpagemod/notify", title, body, icon, data);`
+`self.port.on("dotpagemod/notify-clicked", data => {});`
+
+*Note*: A [notification via
+WebAPI](https://developer.mozilla.org/en-US/docs/Web/API/notification) requires
+the website to have permission for it, but our scripts are written by the user,
+so permission is implicitly given – and independent from the permission status
+of the website.
 
 ## Logo
 

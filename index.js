@@ -11,6 +11,21 @@ const hostname2include = require('./lib/utils').hostname2include;
    easy debugging of the loaded selfmade js files */
 require('./lib/loglevel').setExtension('all');
 
+const notifications = require("sdk/notifications");
+const sendNotification = worker => (ntitle, nbody, nicon, ndata) => {
+	const options = {
+		title: ntitle ? ntitle : 'From dotPageMod with love',
+		text: nbody ? nbody : 'Can I have your attention?'
+	};
+	if (nicon)
+		options.iconURL = nicon;
+	if (ndata) {
+		options.data = ndata;
+		options.onClick = (data) => worker.port.emit('dotpagemod/notify-clicked', data);
+	}
+	notifications.notify(options);
+};
+
 files.registerConfigDir(NAME);
 
 let curPageMods = [];
@@ -41,7 +56,10 @@ const loadPageMods = changes => {
 				contentScriptWhen: 'ready',
 				contentStyleFile: cssfiles,
 				attachTo: [ 'top', 'existing' ],
-				onAttach: worker => console.info('pagemod', hostname, 'attached to worker', worker.url.toString())
+				onAttach: worker => {
+					worker.port.on('dotpagemod/notify', sendNotification(worker));
+					console.info('pagemod', hostname, 'attached to worker', worker.url.toString());
+				}
 			}));
 		});
 	} catch (error) {
