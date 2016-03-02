@@ -1,11 +1,13 @@
 "use strict";
 const NAME = require("./package.json").title;
+const NAME_low = NAME.toLowerCase();
 
 const PageMod = require('sdk/page-mod').PageMod;
 const forEach = require('sdk/util/object').each;
 
 const files = require('./lib/files');
 const hostname2include = require('./lib/utils').hostname2include;
+const noHostScriptsConfigured = hostname => script => console.warn('Not running', script, 'as none are configured for', hostname);
 
 /* enable all logging to console for this extension to allow
    easy debugging of the loaded selfmade js files */
@@ -26,6 +28,7 @@ const sendNotification = worker => (ntitle, nbody, nicon, ndata) => {
 	notifications.notify(options);
 };
 
+
 files.registerConfigDir(NAME);
 
 let curPageMods = [];
@@ -34,21 +37,21 @@ const loadPageMods = changes => {
 		curPageMods.forEach(mod => mod.destroy());
 		curPageMods = [];
 		console.info('loadPageMods triggered by', changes);
-		const filesByDir = files.getFilesPerConfigSubDir(NAME, ['js', 'css']);
+		const filesByDir = files.getFilesPerConfigSubDir(NAME, ['js', 'css', 'sh']);
 		const framework = filesByDir.hasOwnProperty('FRAMEWORK') ? filesByDir.FRAMEWORK : {js: [], css: [] };
-		forEach(filesByDir, (files, hostname) => {
+		forEach(filesByDir, (filelist, hostname) => {
 			if (hostname === 'FRAMEWORK')
 				return;
 			const match = hostname2include(hostname);
 			let jsfiles, cssfiles;
-			if (framework === undefined || files.js.length === 0)
-				jsfiles = files.js;
+			if (framework === undefined || filelist.js.length === 0)
+				jsfiles = filelist.js;
 			else
-				jsfiles = framework.js.concat(files.js);
-			if (framework === undefined || files.css.length === 0)
-				cssfiles = files.css;
+				jsfiles = framework.js.concat(filelist.js);
+			if (framework === undefined || filelist.css.length === 0)
+				cssfiles = filelist.css;
 			else
-				cssfiles = framework.css.concat(files.css);
+				cssfiles = framework.css.concat(filelist.css);
 			console.log('hostname', hostname, 'matched with', match, 'gets a pagemod created with', jsfiles, cssfiles);
 			curPageMods.push(PageMod({
 				include: match,
@@ -57,7 +60,11 @@ const loadPageMods = changes => {
 				contentStyleFile: cssfiles,
 				attachTo: [ 'top', 'existing' ],
 				onAttach: worker => {
-					worker.port.on('dotpagemod/notify', sendNotification(worker));
+					worker.port.on(NAME_low + '/notify', sendNotification(worker));
+					if (filelist.sh.length !== 0)
+						worker.port.on(NAME_low + '/run', files.runHostScript(worker, NAME, hostname, filelist.sh));
+					else
+						worker.port.on(NAME_low + '/run', noHostScriptsConfigured(hostname));
 					console.info('pagemod', hostname, 'attached to worker', worker.url.toString());
 				}
 			}));
