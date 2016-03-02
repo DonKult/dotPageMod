@@ -32,6 +32,7 @@ const sendNotification = worker => (ntitle, nbody, nicon, ndata) => {
 files.registerConfigDir(NAME);
 
 let curPageMods = [];
+const tabs = require("sdk/tabs");
 const loadPageMods = changes => {
 	try {
 		curPageMods.forEach(mod => mod.destroy());
@@ -65,6 +66,13 @@ const loadPageMods = changes => {
 						worker.port.on(NAME_low + '/run', files.runHostScript(worker, NAME, hostname, filelist.sh));
 					else
 						worker.port.on(NAME_low + '/run', noHostScriptsConfigured(hostname));
+					worker.port.on(NAME_low + '/tab/activate', () => worker.tab.activate());
+					worker.port.on(NAME_low + '/tab/open', (iurl, ioptions) => {
+						tabs.open({ url: iurl, isPrivate: ioptions.isPrivate,
+							    inNewWindow: ioptions.inNewWindow,
+							    inBackground: ioptions.inBackground,
+							    isPinned: ioptions.isPinned });
+					});
 					console.info('pagemod', hostname, 'attached to worker', worker.url.toString());
 				}
 			}));

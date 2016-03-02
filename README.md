@@ -107,6 +107,19 @@ they all share the same port interface. At the time this becomes a problem for
 you, you should seriously consider writing a standalone extension… – in fact,
 you should consider it before writing the first line using this.
 
+### bring tab to foreground of the window
+
+`self.port.emit('dotpagemod/tab/activate');`
+
+### [open a new tab](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/tabs#open%28options%29)
+
+`window.open(url, '_blank');`
+`self.port.emit('dotpagemod/tab/open', url, { isPrivate, inNewWindow, inBackground, isPinned });`
+
+*Note*: The first option requires the website to have popup permissions, while
+the second can have 'confusing' behavior. Experiment to figure out what works
+best for you.
+
 ## Logo
 
 The logo is derived from Technology Class CSS3-Styling Icon which accompanies
