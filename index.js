@@ -4,6 +4,7 @@ const NAME_low = NAME.toLowerCase();
 
 const PageMod = require('sdk/page-mod').PageMod;
 const forEach = require('sdk/util/object').each;
+const tabs = require("sdk/tabs");
 
 const files = require('./lib/files');
 const hostname2include = require('./lib/utils').hostname2include;
@@ -27,56 +28,87 @@ const sendNotification = worker => (ntitle, nbody, nicon, ndata) => {
 	}
 	notifications.notify(options);
 };
-
+const makePageMod = (framework, filelist, hostname) => {
+	if (hostname === 'FRAMEWORK')
+		return null;
+	const match = hostname2include(hostname);
+	let jsfiles, cssfiles;
+	if (framework === undefined || filelist.js.length === 0)
+		jsfiles = filelist.js;
+	else
+		jsfiles = framework.js.concat(filelist.js);
+	if (framework === undefined || filelist.css.length === 0)
+		cssfiles = filelist.css;
+	else
+		cssfiles = framework.css.concat(filelist.css);
+	console.log('hostname', hostname, 'matched with', match, 'gets a pagemod created with', jsfiles, cssfiles);
+	return PageMod({
+		include: match,
+		contentScriptFile: jsfiles,
+		contentScriptWhen: 'ready',
+		contentStyleFile: cssfiles,
+		attachTo: [ 'top', 'existing' ],
+		onAttach: worker => {
+			worker.port.on(NAME_low + '/notify', sendNotification(worker));
+			if (filelist.sh.length !== 0)
+				worker.port.on(NAME_low + '/run', files.runHostScript(worker, NAME, hostname, filelist.sh));
+			else
+				worker.port.on(NAME_low + '/run', noHostScriptsConfigured(hostname));
+			worker.port.on(NAME_low + '/tab/activate', () => worker.tab.activate());
+			worker.port.on(NAME_low + '/tab/open', (iurl, ioptions) => {
+				tabs.open({ url: iurl, isPrivate: ioptions.isPrivate,
+					inNewWindow: ioptions.inNewWindow,
+					inBackground: ioptions.inBackground,
+					isPinned: ioptions.isPinned });
+			});
+			console.info('pagemod', hostname, 'attached to worker', worker.url.toString());
+		}
+	});
+};
 
 files.registerConfigDir(NAME);
 
-let curPageMods = [];
-const tabs = require("sdk/tabs");
+const interestExtension = ['js', 'css', 'sh'];
+let curPageMods = { };
+let framework;
 const loadPageMods = changes => {
 	try {
-		curPageMods.forEach(mod => mod.destroy());
-		curPageMods = [];
-		console.info('loadPageMods triggered by', changes);
-		const filesByDir = files.getFilesPerConfigSubDir(NAME, ['js', 'css', 'sh']);
-		const framework = filesByDir.hasOwnProperty('FRAMEWORK') ? filesByDir.FRAMEWORK : {js: [], css: [] };
-		forEach(filesByDir, (filelist, hostname) => {
-			if (hostname === 'FRAMEWORK')
-				return;
-			const match = hostname2include(hostname);
-			let jsfiles, cssfiles;
-			if (framework === undefined || filelist.js.length === 0)
-				jsfiles = filelist.js;
-			else
-				jsfiles = framework.js.concat(filelist.js);
-			if (framework === undefined || filelist.css.length === 0)
-				cssfiles = filelist.css;
-			else
-				cssfiles = framework.css.concat(filelist.css);
-			console.log('hostname', hostname, 'matched with', match, 'gets a pagemod created with', jsfiles, cssfiles);
-			curPageMods.push(PageMod({
-				include: match,
-				contentScriptFile: jsfiles,
-				contentScriptWhen: 'ready',
-				contentStyleFile: cssfiles,
-				attachTo: [ 'top', 'existing' ],
-				onAttach: worker => {
-					worker.port.on(NAME_low + '/notify', sendNotification(worker));
-					if (filelist.sh.length !== 0)
-						worker.port.on(NAME_low + '/run', files.runHostScript(worker, NAME, hostname, filelist.sh));
-					else
-						worker.port.on(NAME_low + '/run', noHostScriptsConfigured(hostname));
-					worker.port.on(NAME_low + '/tab/activate', () => worker.tab.activate());
-					worker.port.on(NAME_low + '/tab/open', (iurl, ioptions) => {
-						tabs.open({ url: iurl, isPrivate: ioptions.isPrivate,
-							    inNewWindow: ioptions.inNewWindow,
-							    inBackground: ioptions.inBackground,
-							    isPinned: ioptions.isPinned });
-					});
-					console.info('pagemod', hostname, 'attached to worker', worker.url.toString());
+		let hostdir = '';
+		// was a single file modified or deleted?
+		if (changes.length === 1 && (changes[0][1].includes('MODIFY') ||
+					(changes[0][1].includes('DELETE') && changes[0][1].includes('ISDIR') === false))) {
+			hostdir = changes[0][0];
+		// was a single file modified (vim edition) ?
+		} else if (changes.length === 3 && changes[0][2] === changes[1][2] &&
+				changes[1][2] === changes[2][2] && changes[0][1].includes('MOVED_FROM') &&
+				changes[1][1].includes('CREATE') && changes[2][1].includes('MODIFY')) {
+			hostdir = changes[2][0];
+		// a new file was created
+		} else if (changes.length === 2 && changes[0][2] === changes[1][2] &&
+				changes[0][1].includes('CREATE') && changes[1][1].includes('MODIFY')) {
+			hostdir = changes[1][0];
+		}
+		console.info('loadPageMods triggered by', changes, hostdir);
+		if (hostdir.length !== 0 && hostdir !== 'FRAMEWORK') {
+			if (curPageMods.hasOwnProperty(hostdir)) {
+				curPageMods[hostdir].destroy();
+				delete curPageMods[hostdir];
+			}
+			const filelist = files.getFilesForHostInConfigSubDir(NAME, interestExtension)(hostdir);
+			if (filelist !== null)
+				curPageMods[hostdir] = makePageMod(framework, filelist, hostdir);
+		} else {
+			forEach(curPageMods, mod => mod.destroy());
+			curPageMods = { };
+			const filesByDir = files.getFilesPerConfigSubDir(NAME, interestExtension);
+			framework = filesByDir.hasOwnProperty('FRAMEWORK') ? filesByDir.FRAMEWORK : {js: [], css: [] };
+			for (let dir in filesByDir)
+				if (filesByDir.hasOwnProperty(dir)) {
+					const pagemod = makePageMod(framework, filesByDir[dir], dir);
+					if (pagemod !== null)
+						curPageMods[dir] = pagemod;
 				}
-			}));
-		});
+		}
 	} catch (error) {
 		console.error('' + error);
 	}
@@ -84,10 +116,9 @@ const loadPageMods = changes => {
 loadPageMods([]);
 
 const testInterestingNotify = line => {
-	if (line[1].includes('ISDIR')) {
+	if (line[1].includes('ISDIR'))
 		return line[1].includes('CREATE') === false;
-	}
-	return line[2].endsWith('.css') || line[2].endsWith('.js');
+	return interestExtension.some(ext => line[2].endsWith('.' + ext));
 };
 const { DirectoryWatch } = require('./lib/inotify');
 const watch = DirectoryWatch(files.getConfigPath(NAME), testInterestingNotify);
