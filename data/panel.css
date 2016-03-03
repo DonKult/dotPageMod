@@ -1,0 +1,27 @@
+button {
+	display: block;
+	width: 100%;
+	margin-bottom: 1em;
+}
+h1 {
+	text-align: center;
+	background-color: rgb(68, 68, 68);
+	color: rgb(187, 187, 187);
+	font-size: 0.7em;
+	padding: 0.2em 0px;
+}
+#browse-config:before {
+	content: "⚒ ";
+	color: green;
+}
+#reload-config:before {
+	content: "♻ ";
+	color: red;
+}
+#restart-watcher:before {
+	content: "☠ ";
+}
+#call-helpline:before {
+	content: "✆ ";
+	color: blue;
+}

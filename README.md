@@ -6,11 +6,12 @@ to load local CSS and JavaScript into webpages.
 
 ## Features
 
-* each hostname has its own directory in a config directory residing in the
-  firefox profile of each user
+* each hostname has its own directory in a [config
+  directory](resource://dotpagemod-config/) residing in the firefox profile of
+  each user
 * additional resources (images, fonts, …) in this directory are accessible as
   usual from CSS – no need for data: or online sources
-* port specific hosts with hostname_port
+* port specific hosts with `hostname_port`
 * hostnames like `mozilla.org` match `developer.mozilla.org`
 * in fact: `org` matches all hosts in that top-level domain, too
 * `ALL` for all hosts (on http/https) or `ALL_scheme` for all hosts on a
@@ -24,7 +25,7 @@ to load local CSS and JavaScript into webpages.
 * your PageMods apply to the top window (not to frames) and apply to exisiting
   pages on (re)load
 * on deactivation CSS sheets are automatically unapplied, JavaScript modifications
-  can be reverted by registering an undo method with `self.port.on("detach", revert);`
+  can be reverted by registering an undo method
 * on Linux with inotifywait (packaged in Debian in _inotify-tools_) the addon
   will reload automatically on relevant changes in the config directory
 
@@ -68,22 +69,22 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 
 ### [path-specific CSS](https://developer.mozilla.org/en-US/docs/Web/CSS/@document)
 
-`@-moz-document url-prefix(http://www.w3.org/Style/) { }`
-`@-moz-document regex("https:.*") { }`
+	@-moz-document url-prefix(http://www.w3.org/Style/) { }
+	@-moz-document regex("https:.*") { }
 
 ### [path-specific JavaScript](https://developer.mozilla.org/en-US/docs/Web/API/Window/location)
 
-`if (window.location.pathname === '/Style/')`
-`if (window.location.pathname.startsWith('/Style/'))`
+	if (window.location.pathname === '/Style/')
+	if (window.location.pathname.startsWith('/Style/'))
 
-### [revert JavaScript changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
+### [undo JavaScript changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
 
-`self.port.on("detach", () => {});`
+	self.port.on("detach", () => {});
 
 ### showing desktop notifications
 
-`self.port.emit("dotpagemod/notify", title, body, icon, data);`
-`self.port.on("dotpagemod/notify-clicked", data => {});`
+	self.port.emit("dotpagemod/notify", title, body, icon, data);
+	self.port.on("dotpagemod/notify-clicked", data => {});
 
 *Note*: A [notification via
 WebAPI](https://developer.mozilla.org/en-US/docs/Web/API/notification) requires
@@ -93,28 +94,28 @@ of the website.
 
 ### running a hostscript
 
-`self.port.emit("dotpagemod/run", 'script.run@1', [ '-q', window.location ] );`
-`self.port.on("dotpagemod/run/script.run@1/stdout", data => {});`
-`self.port.on("dotpagemod/run/script.run@1/stderr", data => {});`
-`self.port.on("dotpagemod/run/script.run@1/close", (code, signal) => {});`
-`self.port.on("dotpagemod/run/script.run@1/error", (code) => {});`
-`self.port.emit("dotpagemod/run/script.run@1/stdin/data", '');`
-`self.port.emit("dotpagemod/run/script.run@1/stdin/end");`
+	self.port.emit("dotpagemod/run", 'script.run@1', [ '-q', window.location ] );
+	self.port.on("dotpagemod/run/script.run@1/stdout", data => {});
+	self.port.on("dotpagemod/run/script.run@1/stderr", data => {});
+	self.port.on("dotpagemod/run/script.run@1/close", (code, signal) => {});
+	self.port.on("dotpagemod/run/script.run@1/error", (code) => {});
+	self.port.emit("dotpagemod/run/script.run@1/stdin/data", '');
+	self.port.emit("dotpagemod/run/script.run@1/stdin/end");
 
 *Note*: A hostscript provides you with enormous power – be very careful!
-While spawning multiple instances of the same script is possible, beware that
-they all share the same port interface. At the time this becomes a problem for
-you, you should seriously consider writing a standalone extension… – in fact,
+While spawning multiple instances of the same script is possible, this just
+skyrockets the complexity of your content scripts, so at that point in time
+you should seriously consider writing a standalone extension… – in fact,
 you should consider it before writing the first line using this.
 
 ### bring tab to foreground of the window
 
-`self.port.emit('dotpagemod/tab/activate');`
+	self.port.emit('dotpagemod/tab/activate');
 
 ### [open a new tab](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/tabs#open%28options%29)
 
-`window.open(url, '_blank');`
-`self.port.emit('dotpagemod/tab/open', url, { isPrivate, inNewWindow, inBackground, isPinned });`
+	window.open(url, '_blank');
+	self.port.emit('dotpagemod/tab/open', url, { isPrivate, inNewWindow, inBackground, isPinned });
 
 *Note*: The first option requires the website to have popup permissions, while
 the second can have 'confusing' behavior. Experiment to figure out what works
