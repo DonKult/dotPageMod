@@ -1,0 +1,13 @@
+/* Bootstrap dropdown menus are everywhere and require JavaScript…
+   Ignoring browser compatibility we can happily go CSS-only */
+li.dropdown > ul {
+	display: block;
+	visibility: hidden;
+	opacity: 0;
+	transition: visibility 0s linear 0.3s, opacity 0.3s linear;
+}
+li.dropdown:hover > ul {
+	visibility: visible;
+	opacity: 1;
+	transition-delay: 0s;
+}

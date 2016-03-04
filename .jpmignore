@@ -1,4 +1,5 @@
-.git
+.git/
+examples/
 .gitignore
 .jpmignore
 *.xpi

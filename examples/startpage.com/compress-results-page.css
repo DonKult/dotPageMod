@@ -1,0 +1,17 @@
+/* compress the display of results */
+.links_beside_url
+{
+	display: none;
+}
+h3.clk, p.ads_desc_stuff_normal
+{
+	display: inline;
+}
+#results li > div.result
+{
+	max-width: none !important;
+}
+div.result p.desc
+{
+	max-width: 525px;
+}

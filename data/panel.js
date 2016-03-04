@@ -10,3 +10,4 @@ setupButton('#browse-config', 'dotpagemod/config/browse');
 setupButton('#reload-config', 'dotpagemod/config/reload');
 setupButton('#restart-watcher', 'dotpagemod/config/watcher');
 setupButton('#call-helpline', 'dotpagemod/config/readme');
+setupButton('#show-examples', 'dotpagemod/config/examples');

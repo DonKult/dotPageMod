@@ -1,0 +1,11 @@
+/* too hard to implement, so hide the non-working stuff
+   Just enable JS in that case if you really need it */
+.select-menu-modal .select-menu-header,
+.select-menu-modal .select-menu-filters
+{
+	display: none;
+}
+.select-menu-modal .select-menu-list
+{
+	display: block;
+}

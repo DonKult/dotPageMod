@@ -1,0 +1,8 @@
+#quick-links > ol > li > ol
+{
+	display: none;
+}
+#quick-links > ol > li:hover > ol
+{
+	display: block;
+}

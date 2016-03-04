@@ -3,6 +3,9 @@ button {
 	width: 100%;
 	margin-bottom: 1em;
 }
+button:last-child {
+	margin-bottom: 0;
+}
 h1 {
 	text-align: center;
 	background-color: rgb(68, 68, 68);
@@ -24,4 +27,7 @@ h1 {
 #call-helpline:before {
 	content: "✆ ";
 	color: blue;
+}
+#show-examples:before {
+	content: "⌘ ";
 }

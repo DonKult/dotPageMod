@@ -52,3 +52,4 @@ panel.port.on(NAME_low + '/config/watcher', () => { panel.hide(); watch.restart(
 const tabs = require("sdk/tabs");
 panel.port.on(NAME_low + '/config/browse', () => { panel.hide(); tabs.open({ url: 'resource://' + NAME_low + '-config/', inNewWindow: false }); });
 panel.port.on(NAME_low + '/config/readme', () => { panel.hide(); tabs.open({ url: './../README.html', inNewWindow: false }); });
+panel.port.on(NAME_low + '/config/examples', () => { panel.hide(); tabs.open({ url: 'https://github.com/DonKult/dotPageMod/tree/master/examples', inNewWindow: false }); });

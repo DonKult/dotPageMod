@@ -1,0 +1,9 @@
+/* expand description – javascript is needed for that usually… */
+#watch-description-text
+{
+	max-height: none !important;
+}
+.yt-uix-expander .yt-uix-expander-collapsed-body, .yt-uix-expander-collapsed .yt-uix-expander-body
+{
+	display: block !important;
+}

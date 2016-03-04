@@ -22,7 +22,7 @@ to load local CSS and JavaScript into webpages.
 * scripts can show desktop notifications without WebAPI (see Cheatsheet)
 * your JavaScript/CSS works even if the page has them blocked by a _Content
   Security Policy_ or [uMatrix](https://github.com/gorhill/uMatrix)
-* your PageMods apply to the top window (not to frames) and apply to exisiting
+* your PageMods apply to the top window (not to frames) and apply to existing
   pages on (re)load
 * on deactivation CSS sheets are automatically unapplied, JavaScript modifications
   can be reverted by registering an undo method
@@ -34,6 +34,7 @@ to load local CSS and JavaScript into webpages.
 * [Greasemonkey](http://www.greasespot.net/) and various clones for all browsers
 * [dotjs](https://github.com/defunkt/dotjs) for Chrome and
   [dotjs](https://github.com/rlr/dotjs-addon) for Firefox
+* [Stylish](https://userstyles.org/)
 * [uBlock Origin](https://github.com/gorhill/uBlock) with cosmetic filters
 
 ## So, why another one?
@@ -44,7 +45,7 @@ and editing in a browser window. I _regressed_ to using [Adblock
 Plus](https://adblockplus.org/) and later [uBlock
 Origin](https://github.com/gorhill/uBlock) for cosmetic filtering and more and
 more to block the execution of JavaScript by default. Eventually I introduced
-[uMatrix](https://github.com/gorhill/uMatrix) with a rigit block-policy to the
+[uMatrix](https://github.com/gorhill/uMatrix) with a rigid block-policy to the
 mix which ended up leaving uBlock mostly jobless beside a bunch of cosmetic
 filters. Management of these isn't perfect through and sometimes you want more
 than just `display: none` – especially now that I had all of JavaScript blocked
@@ -118,8 +119,72 @@ you should consider it before writing the first line using this.
 	self.port.emit('dotpagemod/tab/open', url, { isPrivate, inNewWindow, inBackground, isPinned });
 
 *Note*: The first option requires the website to have popup permissions, while
-the second can have 'confusing' behavior. Experiment to figure out what works
-best for you.
+the second can have a 'confusing' new-window behavior for private tabs.
+Experiment to figure out what works best for you.
+
+## Examples
+
+Websites like [OpenUserJS](https://openuserjs.org/), [Greasy
+Fork](https://greasyfork.org/) and [UserStyles](https://userstyles.org/) can be
+an inspiration of what you could possibly do with your new JS/CSS powers given
+enough dedication. More (humble) examples can be easily found e.g. on github by
+searching for `dotjs`.
+
+If you are more interested in seeing an example of how this extension could be
+used in practice by a user you can have a look at the [examples
+folder](https://github.com/DonKult/dotPageMod/tree/master/examples).
+
+*Note*: The examples are provided as-is, I am neither endorsing nor
+recommending using any of the examples or even the websites they might apply to
+even if they might have been used by me at some point in the past. No
+guarantees are made that they work as intended and/or (not) eat your babies
+(instead). *You have been warned*.
+
+Website owners who find examples applying to their sites should remember that
+obviously a user has cared deeply enough about the site to modify it to cater
+even better to its own needs instead of moving away to a competitor before
+starting a "you are experiencing it all wrong – professionals have designed
+that for you!" frenzy. You might even recognize the chance to incorporate the
+changes into your design for the benefit of all users (if applicable).
+
+If you want to have a look you should start exploring with `FRAMEWORK/david.js`
+as this nano framework is heavily used in the example configuration.
+
+Feel free to propose more examples in patches and pull-requests, but note that
+I reserve the right to deny any proposal if I deem the example unworthy by my
+sole reasoning. This explicitly includes examples whose sole purpose it is to
+hide elements on a page as nobody needs to see an example of `display: none`¹
+even if that is a valid usecase in practice and my own config contains plenty
+of those.
+
+¹ if you really want to see one: `ALL/antisocial.css` was made for you.
+
+## Installation
+
+At the moment you have to build the extension yourself to install it. Given
+that I approximate the userbase to be only me, I have no plans to shuffle the
+addon into the review queue as it would just waste valuable reviewer time.
+That also means you have to run a Developer/Nightly edition of Firefox as it
+isn't signed.
+
+If that wasn't discouraging enough you have to install
+[jpm](https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/jpm) and
+[Pandoc](http://pandoc.org/) after which `make` will produce an xpi for you.
+
+## Contributing aka Where are all the testcases?
+
+Looking at the source it doesn't take long to figure out that the addon code
+comes with no tests attached. Why is that you might ask – and you are right!
+I pondered hard about this myself, but ultimately decided that the way this
+addon works is too hard to test for me at this point in time given no previous
+experience with addon development as a whole and that nearly all interesting
+functions deal heavily with files which isn't exactly a strong suite of the SDK.
+Until this will inescapably bite me (and it surely will), I will kid you and me
+alike that this addon is sufficiently small to not need automatic tests…
+
+You can treat the examples folder as well as your personal collection as a
+testcase – it is what I do. So, if you happen to want to provide a patch, feel
+free to implement an example for its use as well and fling it my way.
 
 ## Logo
 
@@ -128,10 +193,10 @@ the official HTML5 Logo [HTML5 Logo](https://www.w3.org/html/logo/) by
 [W3C](https://www.w3.org/) under the
 [CC-BY-3](https://creativecommons.org/licenses/by/3.0/).
 
-The original is black – I am coloring the 'J' in this stylished 3 in yellow
+The original is black – I am coloring the 'J' in this stylised 3 in yellow
 and the remaining 2 strokes in blue as JavaScript and CSS tend to be shown with
-those shield colors accompaning the HTML5 icon.  They are also the colors of
-the [SelfHTML](http://wiki.selfhtml.org) logo which was a happy accident
+those shield colors accompanying the HTML5 icon.  They are also the colors of
+the [SelfHTML](https://wiki.selfhtml.org) logo which was a happy accident
 through.
 
 Not very creative, I know, but it seemed better than using a gear or wrench…

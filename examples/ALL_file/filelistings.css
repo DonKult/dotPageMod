@@ -1,0 +1,8 @@
+body > table > tbody > tr:nth-child(odd)
+{
+	background-color: ThreeDLightShadow;
+}
+body > table > tbody > tr:hover
+{
+	outline-color: grey;
+}

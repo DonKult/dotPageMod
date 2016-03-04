@@ -1,0 +1,33 @@
+@-moz-document domain(dotpagemod-config)
+{
+	a.file.edit:after
+	{
+		content: " ✍";
+	}
+	span.delete
+	{
+		color: red;
+		margin-left: 1em;
+		cursor: pointer;
+	}
+	.create.dir:before
+	{
+		content: '⊕';
+	}
+	.create.dir
+	{
+		-moz-margin-start: 30px;
+	}
+	.create.file:before
+	{
+		content: '⊕ ';
+	}
+	.create.file
+	{
+		-moz-margin-start: 10px;
+	}
+	.create:before
+	{
+		color: green;
+	}
+}
