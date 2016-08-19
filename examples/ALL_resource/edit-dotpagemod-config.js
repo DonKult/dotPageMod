@@ -23,8 +23,9 @@ if (window.location.hostname === 'dotpagemod-config') {
 		const p = link.parentNode;
 		if (p.querySelector('.delete, .create') === null) {
 			const del = document.createElement('span');
-			del.textContent = '🚮';
+			del.textContent = '🕱';
 			del.classList.add('delete');
+			del.title = 'Delete file';
 			addEventListener(del, 'click', deleteLink(link));
 			p.appendChild(del);
 		}
@@ -44,7 +45,7 @@ if (window.location.hostname === 'dotpagemod-config') {
 		const p = link.parentNode;
 		if (p.querySelector('.delete, .create') === null) {
 			const del = document.createElement('span');
-			del.textContent = '🚮';
+			del.textContent = '🕱';
 			del.classList.add('delete');
 			addEventListener(del, 'click', deleteDirectoryLink(link));
 			p.appendChild(del);
@@ -75,7 +76,7 @@ if (window.location.hostname === 'dotpagemod-config') {
 		if (newdir !== null) {
 			const i = ++runner;
 			const uri = window.location.toString() + newdir;
-			self.port.on('dotpagemod/run/edit-dotpagemod-config.sh@' + i + '/exit', () => window.location = window.location);
+			self.port.on('dotpagemod/run/edit-dotpagemod-config.sh@' + i + '/exit', () => window.location = window.location + newdir + '/');
 			self.port.emit('dotpagemod/run', 'edit-dotpagemod-config.sh@' + i, [ 'mkdir', decodeURI(uri) ]);
 		}
 	};
@@ -91,11 +92,6 @@ if (window.location.hostname === 'dotpagemod-config') {
 		p.appendChild(ul);
 		li[0].appendChild(up);
 	});
-	if (window.location.pathname === '/') {
-		forIt('.create.dir', a => { a.parentNode.style.display = 'block'; addEventListener(a, 'click', newDirectoryLink); });
-		forIt('.create.file', a => a.parentNode.style.display = 'none');
-	} else {
-		forIt('.create.file', a => { a.parentNode.style.display = 'block'; addEventListener(a, 'click', newFileLink); });
-		forIt('.create.dir', a => a.parentNode.style.display = 'none');
-	}
+	forIt('.create.dir', a => addEventListener(a, 'click', newDirectoryLink));
+	forIt('.create.file', a => addEventListener(a, 'click', newFileLink));
 }

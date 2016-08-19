@@ -2,7 +2,7 @@
 if [ -z "$2" ]; then
 	exit 1
 fi
-FILE="$(readlink -f '..')/$(echo "$2" | cut -d'/' -f 4- )"
+FILE="$(echo "$2" | cut -d'/' -f 4- )"
 
 case "$1" in
 edit)

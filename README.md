@@ -9,6 +9,8 @@ to load local CSS and JavaScript into webpages.
 * each hostname has its own directory in a [config
   directory](resource://dotpagemod-config/) residing in the firefox profile of
   each user
+* the hostname directories itself can be stored in independent packs for easier
+  sharing and syncing (e.g. private, public, work, home, …)
 * additional resources (images, fonts, …) in this directory are accessible as
   usual from CSS – no need for data: or online sources
 * port specific hosts with `hostname_port`
