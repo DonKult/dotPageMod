@@ -1,4 +1,4 @@
-# dotPageMod
+# ![Logo of dotPageMod](./icon.png) dotPageMod
 
 Firefox extension for user configuration powered
 [PageMods](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
@@ -30,6 +30,8 @@ to load local CSS and JavaScript into webpages.
   can be reverted by registering an undo method
 * on Linux with inotifywait (packaged in Debian in _inotify-tools_) the addon
   will reload automatically on relevant changes in the config directory
+* a badge on the toolbar button indicates how many files modify the current tab.
+  A list of these files can be accessed in the panel.
 
 ## (Better?) Alternatives
 

@@ -6,10 +6,25 @@
 	</head>
 	<body>
 		<h1>dotPageMod</h1>
-		<button id="browse-config" disabled="true">Browse Configuration</button>
-		<button id="reload-config" disabled="true">Reload Configuration</button>
-		<button id="restart-watcher" disabled="true">Restart Watcher</button>
-		<button id="call-helpline" disabled="true">Show README</button>
-		<button id="show-examples" disabled="true">View examples online</button>
+		<div id="menu">
+			<button id="browse-config" disabled="true" data-emit-action="openurl" data-emit-param="resource://dotpagemod-config/">⚒<span class="tooltip">Browse Configuration</span></button>
+			<button id="reload-config" disabled="true" data-emit-action="reload">♻<span class="tooltip">Reload Configuration</span></button>
+			<button id="restart-watcher" disabled="true" data-emit-action="watcher">☠<span class="tooltip">Restart Watcher</span></button>
+			<button id="call-helpline" disabled="true" data-emit-action="openurl" data-emit-param="./../README.html">✆<span class="tooltip">Show README</span></button>
+			<button id="show-examples" disabled="true" data-emit-action="openurl" data-emit-param="https://github.com/DonKult/dotPageMod/tree/master/examples">⌘<span class="tooltip">View examples online</span></button>
+		</div>
+		<ul id="filelisting">
+			<li>example
+				<ul>
+					<li>example.org
+						<ul>
+							<li>foobar.css</li>
+							<li>foobar.js</li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+		</ul>
+		<script src="panel.js"></script>
 	</body>
 </html>

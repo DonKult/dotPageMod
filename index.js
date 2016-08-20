@@ -21,19 +21,22 @@ const button = ToggleButton({
 	badge: '',
 	badgeColor: 'black',
 });
+let tabFiles = {};
 dotPageMod.onPage((action, tab, files) => {
 	if (typeof tab !== 'object')
 		return;
-	const badgen = button.state(tab).badge;
-	const n = typeof badgen === "number" ? badgen : 0;
-	if (action === 'show') {
-		button.state(tab, { badge: n + files.length });
-	} else if (action === 'hide') {
-		if (n <= files.length)
-			button.state(tab, { badge: '' });
-		else
-			button.state(tab, { badge: n - files.length });
+	if (tabFiles.hasOwnProperty(tab.id) === false) {
+		tabFiles[tab.id] = [];
+		tab.on('close', () => { delete tabFiles[tab.id]; });
 	}
+	if (action === 'show')
+		Array.prototype.push.apply(tabFiles[tab.id], files);
+	else if (action === 'hide')
+		tabFiles[tab.id]  = tabFiles[tab.id].filter(v => { return files.some(f => f === v) === false; } );
+	if (tabFiles[tab.id].length === 0)
+		button.state(tab, { badge: '' });
+	else
+		button.state(tab, { badge: tabFiles[tab.id].length });
 });
 
 // install listener for changes in the config files
@@ -53,10 +56,11 @@ dotPageMod.load([]);
 const panels = require("sdk/panel");
 const panel = panels.Panel({
 	contentURL: "./panel.html",
-	contentScriptFile: "./panel.js"
 });
+const tabs = require("sdk/tabs");
 const handleChange = state => {
 	if (state.checked) {
+		panel.port.emit(NAME_low + '/filelist', tabFiles[tabs.activeTab.id]);
 		panel.show({
 			position: button
 		});
@@ -69,7 +73,4 @@ const handleHide = () => {
 panel.on('hide', handleHide);
 panel.port.on(NAME_low + '/config/reload', () => { panel.hide(); dotPageMod.load([]); });
 panel.port.on(NAME_low + '/config/watcher', () => { panel.hide(); watch.restart(); });
-const tabs = require("sdk/tabs");
-panel.port.on(NAME_low + '/config/browse', () => { panel.hide(); tabs.open({ url: 'resource://' + NAME_low + '-config/', inNewWindow: false }); });
-panel.port.on(NAME_low + '/config/readme', () => { panel.hide(); tabs.open({ url: './../README.html', inNewWindow: false }); });
-panel.port.on(NAME_low + '/config/examples', () => { panel.hide(); tabs.open({ url: 'https://github.com/DonKult/dotPageMod/tree/master/examples', inNewWindow: false }); });
+panel.port.on(NAME_low + '/config/openurl', (file) => { panel.hide(); tabs.open({ url: file, inNewWindow: false }); });
