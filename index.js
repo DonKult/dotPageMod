@@ -11,7 +11,30 @@ require('./lib/loglevel').setExtension('all');
 files.registerConfigDir(NAME);
 const dotPageMod = require('./lib/dotpagemod.js');
 dotPageMod.setName(NAME);
-dotPageMod.load([]);
+
+// add a button displaying a count of how many files apply to this tab
+const { ToggleButton } = require("sdk/ui/button/toggle");
+const button = ToggleButton({
+	id: NAME_low,
+	label: NAME,
+	icon: './../icon.png',
+	badge: '',
+	badgeColor: 'black',
+});
+dotPageMod.onPage((action, tab, files) => {
+	if (typeof tab !== 'object')
+		return;
+	const badgen = button.state(tab).badge;
+	const n = typeof badgen === "number" ? badgen : 0;
+	if (action === 'show') {
+		button.state(tab, { badge: n + files.length });
+	} else if (action === 'hide') {
+		if (n <= files.length)
+			button.state(tab, { badge: '' });
+		else
+			button.state(tab, { badge: n - files.length });
+	}
+});
 
 // install listener for changes in the config files
 const testInterestingNotify = line => {
@@ -23,13 +46,10 @@ const { DirectoryWatch } = require('./lib/inotify');
 const watch = DirectoryWatch(files.getConfigPath(NAME), testInterestingNotify);
 watch.on('stablized', dotPageMod.load);
 
-// add a panel button to trigger some common actions
-const { ToggleButton } = require("sdk/ui/button/toggle");
-const button = ToggleButton({
-	id: NAME_low,
-	label: NAME,
-	icon: './../icon.png'
-});
+// do the initial complete load
+dotPageMod.load([]);
+
+// extend our button with a panel to trigger some common actions
 const panels = require("sdk/panel");
 const panel = panels.Panel({
 	contentURL: "./panel.html",
