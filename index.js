@@ -20,7 +20,7 @@ const testInterestingNotify = line => {
 };
 const { DirectoryWatch } = require('./lib/inotify');
 const watch = DirectoryWatch(files.getConfigPath(NAME), testInterestingNotify);
-watch.on('stablized', dotPageMod.load);
+watch.on('directory/changed', dotPageMod.load);
 
 // add a button displaying a count of how many files apply to this tab
 // with an attached panel showing options and list of applying files
@@ -29,6 +29,7 @@ const pb = PanelButton.create(NAME_low, NAME, './../icon.png');
 dotPageMod.onPage(PanelButton.pageObserver);
 pb.panel.port.on(NAME_low + '/config/reload', () => { pb.panel.hide(); dotPageMod.load([]); });
 pb.panel.port.on(NAME_low + '/config/watcher', () => { pb.panel.hide(); watch.restart(); });
+watch.on('directory/changed', PanelButton.directoryObserver);
 
 // do the initial complete load
 dotPageMod.load([]);
