@@ -15,13 +15,13 @@ for (let i = 0; i < buttons.length; ++i) {
 	buttons[i].disabled = false;
 }
 
-addon.port.on('dotpagemod/filelist', filelist => {
+addon.port.on('dotpagemod/filelist', (baseuri, filelist) => {
 	const filelisting = document.querySelector('#filelisting');
 	while (filelisting.hasChildNodes())
 		filelisting.removeChild(filelisting.firstChild);
 	if (filelist === null)
 		return;
-	const baseuri = document.querySelector('#browse-config').getAttribute('data-emit-param');
+	document.querySelector('#browse-config').setAttribute('data-emit-param', baseuri);
 	let filetree = {};
 	filelist.forEach(file => {
 		const path = file.substr(baseuri.length);

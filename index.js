@@ -25,7 +25,7 @@ watch.on('directory/changed', dotPageMod.load);
 // add a button displaying a count of how many files apply to this tab
 // with an attached panel showing options and list of applying files
 const PanelButton = require('./lib/panelbutton.js');
-const pb = PanelButton.create(NAME_low, NAME, './../icon.png');
+const pb = PanelButton.create(NAME_low, NAME, './../icon.png', files.getConfigDir(NAME));
 dotPageMod.onPage(PanelButton.pageObserver);
 pb.panel.port.on(NAME_low + '/config/reload', () => { pb.panel.hide(); dotPageMod.load([]); });
 pb.panel.port.on(NAME_low + '/config/watcher', () => { pb.panel.hide(); watch.restart(); });
