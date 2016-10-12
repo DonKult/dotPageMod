@@ -18,7 +18,18 @@ const addEventListener = (element, type, callback) => {
 };
 const toggleStyle = (node, style, defvalue, flipvalue) => {
 	if(node !== null) {
-		self.port.on("detach", () => node.style[style] = defvalue);
+		const attrib = 'data-dotpagemod-togglestyle-' + style;
+		if (node.getAttribute(attrib) === null) {
+			self.port.on("detach", () => node.style[style] = node.getAttribute(attrib));
+			node.setAttribute(attrib, defvalue);
+		}
 		node.style[style] = (window.getComputedStyle(node)[style] === defvalue) ? flipvalue : defvalue;
 	}
 };
+const runOnLoad = func => {
+	if (document.readyState === 'complete') {
+		func();
+	} else
+		addEventListener(document, 'readystatechange', e => { if (document.readyState === 'complete') func(e); });
+};
+self.port.on("detach", () => forEach('.dotpagemod-delete', itm => itm.parentNode.removeChild(itm)));

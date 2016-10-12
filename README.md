@@ -86,6 +86,9 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 
 	self.port.on("detach", () => {});
 
+*Note*: The example nano-framework has some wrappers and examples to undo common
+changes like event handlers, style toggles and removal of added elements.
+
 ### showing desktop notifications
 
 	self.port.emit("dotpagemod/notify", title, body, icon, data);
@@ -152,7 +155,8 @@ that for you!" frenzy. You might even recognize the chance to incorporate the
 changes into your design for the benefit of all users (if applicable).
 
 If you want to have a look you should start exploring with `FRAMEWORK/david.js`
-as this nano framework is heavily used in the example configuration.
+as this nano framework is heavily used in the example configuration – nothing
+prevents you from using heavier guns like JQuery in your own set of course.
 
 Feel free to propose more examples in patches and pull-requests, but note that
 I reserve the right to deny any proposal if I deem the example unworthy by my
