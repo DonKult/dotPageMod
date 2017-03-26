@@ -215,7 +215,7 @@ Appart from the logo, which is (also) licensed under the [Creative Commons
 Attribution 3.0](https://creativecommons.org/licenses/by/3.0/) as mentioned in
 the previous paragraph, the extension is MIT (Expat) licensed.
 
-	Copyright © 2016 David Kalnischkies <david@kalnischkies.de>
+	Copyright © 2016-2017 David Kalnischkies <david@kalnischkies.de>
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy of
 	this software and associated documentation files (the "Software"), to deal in
