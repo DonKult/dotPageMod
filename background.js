@@ -28,7 +28,6 @@ const db = new Promise((resolve, reject) => {
 const executePageMod = (tabId, runat, p) => {
 	const opt = {
 		'allFrames': false,
-		'cssOrigin': 'user',
 		'runAt': runat,
 		'code': p.content,
 	};
