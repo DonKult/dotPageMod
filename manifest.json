@@ -25,6 +25,12 @@
     "notifications"
   ],
   "background": {
-    "scripts": [ "config.js", "background.js" ]
+    "scripts": [
+      "config.js",
+      "background/app.js",
+      "background/database.js",
+      "background/pagemods.js",
+      "background.js"
+    ]
   }
 }
