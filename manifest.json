@@ -21,7 +21,8 @@
     "<all_urls>",
     "tabs",
     "webNavigation",
-    "nativeMessaging"
+    "nativeMessaging",
+    "notifications"
   ],
   "background": {
     "scripts": [ "config.js", "background.js" ]

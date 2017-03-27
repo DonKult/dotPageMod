@@ -91,8 +91,7 @@ changes like event handlers, style toggles and removal of added elements.
 
 ### showing desktop notifications
 
-	self.port.emit("dotpagemod/notify", title, body, icon, data);
-	self.port.on("dotpagemod/notify-clicked", data => {});
+	browser.runtime.sendMessage({'cmd': 'notify', 'title': title, 'message': msg});
 
 *Note*: A [notification via
 WebAPI](https://developer.mozilla.org/en-US/docs/Web/API/notification) requires

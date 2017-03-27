@@ -191,3 +191,13 @@ port.onMessage.addListener(r => {
 	}
 });
 port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
+
+browser.runtime.onMessage.addListener(n => {
+	if (n.cmd !== 'notify')
+		return;
+	browser.notifications.create(n.id === undefined ? "" : n.id, {
+		"type": "basic",
+		"title": n.title,
+		"message": n.message,
+	});
+});
