@@ -82,9 +82,20 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 	if (window.location.pathname === '/Style/')
 	if (window.location.pathname.startsWith('/Style/'))
 
-### [undo JavaScript changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
+### [undo changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
 
-	self.port.on("detach", () => {});
+Doesn't work at all at the moment. The closest might be [onSuspend](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/runtime/onSuspend)
+but it is neither implemented in Firefox nor a good drop-in as it can still be cancelled
+and comes with no runtime guarantees whatsoever. I really hope browser vendors will make
+up their mind on this as this doesn't feel like a good user experience.
+
+If there is a solution available one day, dotPageMod will be sending a `{ cmd: 'detach' }`
+message (as it did in the SDK version), so you can react in a content script with:
+
+	browser.runtime.onMessage.addListener(l => {
+		if (l.cmd !== 'detach') return;
+		// TODO: react here
+	});
 
 *Note*: The example nano-framework has some wrappers and examples to undo common
 changes like event handlers, style toggles and removal of added elements.
