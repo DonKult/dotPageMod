@@ -100,7 +100,7 @@ const registerAddedPageModFile = key => {
 			}
 			db.then(db => {
 				hostlistener[host] = executePageModsForHost(db, host);
-				browser.webNavigation.onBeforeNavigate.addListener(
+				browser.webNavigation.onCommitted.addListener(
 					hostlistener[host], filters
 				);
 			});
