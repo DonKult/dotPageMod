@@ -1,8 +1,8 @@
-body > table > tbody > tr:nth-child(odd)
+body[dir="ltr"] > table[order] > tbody > tr:nth-child(odd)
 {
 	background-color: ThreeDLightShadow;
 }
-body > table > tbody > tr:hover
+body[dir="ltr"] > table[order] > tbody > tr:hover
 {
 	outline-color: grey;
 }

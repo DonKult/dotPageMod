@@ -1,0 +1,7 @@
+/* allow looking at the code inline instead of forcing me to another site.
+   Allows looking at them side by side, too, just needs resizing of the textarea */
+form textarea[name="code"] {
+	display: unset !important;
+	font-size: 0.8em;
+	line-height: 1em;
+}
