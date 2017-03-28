@@ -29,8 +29,17 @@
       "config.js",
       "background/app.js",
       "background/database.js",
+      "background/panel-info.js",
       "background/pagemods.js",
       "background.js"
     ]
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_title": "dotPageMod",
+    "default_popup": "panel/panel.html",
+    "default_icon": {
+      "96": "icon.png"
+    }
   }
 }

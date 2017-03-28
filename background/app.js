@@ -24,6 +24,7 @@ const handleListResult = r => {
 		files[f.collection][f.hostname][f.filename] = f.lastmod;
 	});
 	db.then(db => {
+		unregisterPageMods();
 		let os = db.transaction(['files'], 'readwrite').objectStore('files');
 		os.openCursor().onsuccess = e => {
 			const cursor = e.target.result;

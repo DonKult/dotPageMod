@@ -13,8 +13,9 @@ const executePageMod = (tabId, runat, p) => {
 		s = browser.tabs.executeScript(tabId, opt);
 	else //if (p.type === 'css')
 		s = browser.tabs.insertCSS(tabId, opt);
-	s.then(() => {console.log('script in', tabId, 'at', runat, 'for', p.collection, '/', p.hostname, '/', p.filename, 'okay');},
-		() => {console.log('script in', tabId, 'at', runat, 'for', p.collection, '/', p.hostname, '/', p.filename, 'failed');});
+	const filename = p.collection + '/' + p.hostname + '/' + p.filename;
+	s.then(() => updateTabInfo(tabId, filename, true),
+		() => updateTabInfo(tabId, filename, false));
 	return s;
 };
 const executePageModsForHost = (db, host) => details => {
@@ -55,9 +56,10 @@ const registerAddedPageModFile = key => {
 		hostmap[host] = { js: [], css: [] };
 		if (host !== 'FRAMEWORK') {
 			let filters;
-			if (host === 'ALL')
-				;
-			else if (host.startsWith('ALL_')) {
+			if (host === 'ALL') {
+				// This avoids Firefox trying to act on about: pages where we fail to insert scripts
+				filters = { url: [ { schemes: [ "https", "http", "file", "ftp" ] } ] };
+			} else if (host.startsWith('ALL_')) {
 				filters = { url: [ { schemes: [ host.substr(4) ] } ] };
 			} else {
 				const h = host.split('_');
@@ -83,4 +85,11 @@ const registerAddedPageModFile = key => {
 		}
 	}
 	hostmap[host][type].push(key);
+};
+const unregisterPageMods = () => {
+	hostmap = { "FRAMEWORK": { js: [], css: [] } };
+	for (let listener in hostlistener)
+		if (hostlistener.hasOwnProperty(listener))
+			browser.webNavigation.onCommitted.removeListener(hostlistener[listener]);
+	hostlistener = {};
 };

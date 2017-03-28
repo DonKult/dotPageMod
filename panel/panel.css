@@ -1,0 +1,65 @@
+h1 {
+	text-align: center;
+	background-color: rgb(68, 68, 68);
+	color: rgb(187, 187, 187);
+	font-size: 0.7em;
+	padding: 0.2em 0px;
+}
+ul {
+	padding-left: 1em;
+}
+a {
+	text-decoration: none;
+}
+a.failed {
+	color: red;
+}
+a:hover {
+	text-decoration: underline;
+}
+
+#menu {
+	text-align: center;
+}
+#browse-config {
+	color: green;
+}
+#reload-config {
+	color: red;
+}
+#call-helpline {
+	color: blue;
+}
+
+/* adapted from http://www.w3schools.com/css/css_tooltip.asp */
+button {
+	position: relative;
+	display: inline-block;
+	width: 50px;
+}
+button .tooltip {
+	visibility: hidden;
+	background-color: rgb(68, 68, 68);
+	color: rgb(187, 187, 187);
+	text-align: center;
+	padding: 5px;
+	border-radius: 6px;
+
+	position: absolute;
+	top: 115%;
+	left: -12px;
+	z-index: 1;
+}
+button:hover .tooltip {
+	visibility: visible;
+}
+button .tooltip::after {
+	content: " ";
+	position: absolute;
+	bottom: 100%;
+	left: 36px;
+	margin-left: -5px;
+	border-width: 5px;
+	border-style: solid;
+	border-color: transparent transparent rgb(68, 68, 68) transparent;
+}
