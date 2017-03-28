@@ -28,6 +28,8 @@ browser.tabs.onRemoved.addListener(tab => {
 });
 
 browser.webNavigation.onCommitted.addListener(d => {
+	if (d.frameId !== 0)
+		return;
 	if (tabInfo[d.tabId] !== undefined)
 		delete tabInfo[d.tabId];
 	tabInfo[d.tabId] = {};

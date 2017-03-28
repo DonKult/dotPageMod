@@ -19,6 +19,9 @@ const executePageMod = (tabId, runat, p) => {
 	return s;
 };
 const executePageModsForHost = (db, host) => details => {
+	// we want to act only on pages, not on all their (i)frames.
+	if (details.frameId !== 0)
+		return;
 	const css_framework = hostmap[host].css.length !== 0;
 	const js_framework = hostmap[host].js.length !== 0;
 	const i = db.transaction(['files'], 'readonly').objectStore('files').index("hostname");
