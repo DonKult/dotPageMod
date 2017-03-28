@@ -8,7 +8,7 @@ const buttonClickHandler = e => {
 	if (action === 'openurl')
 		browser.tabs.create({url: param});
 	else
-		browser.runtime.sendMessage({cmd: action});
+		browser.runtime.sendMessage({cmd: action}).then(() => window.close());
 };
 const buttons = document.querySelectorAll('button');
 for (let i = 0; i < buttons.length; ++i) {

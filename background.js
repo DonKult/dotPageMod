@@ -11,7 +11,7 @@ port.onMessage.addListener(r => {
 });
 port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
 
-browser.runtime.onMessage.addListener(n => {
+browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 	if (n.cmd === 'notify') {
 		browser.notifications.create(n.id === undefined ? "" : n.id, {
 			"type": "basic",
@@ -20,5 +20,6 @@ browser.runtime.onMessage.addListener(n => {
 		});
 	} else if (n.cmd === 'reloadfiles') {
 		port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
+		sendResponse();
 	}
 });
