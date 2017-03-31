@@ -106,6 +106,8 @@ const applyToOpenTabs = () => {
 		// tabs which aren't loaded have no size, don't execute scripts on them
 		if (tab.width === 0 && tab.height === 0)
 			return;
+		if (tab.id === tabs.TAB_ID_NONE)
+			return;
 		const u = tab.url.split('/', 3);
 		if (u[0] === 'http:' || u[0] === 'https:' || u[0] === 'ftp:') {
 			// this builds an array like [ ALL, com, example.com, foo.example.com ]
