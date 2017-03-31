@@ -3,6 +3,7 @@ import json
 import struct
 import sys
 import os
+import subprocess
 from glob import glob
 
 
@@ -64,3 +65,6 @@ while True:
     # we let the app send an explicit done last
     elif r['cmd'] == 'done?':
         sendMessage(encodeMessage({'cmd': 'doneresult'}))
+    # TODO USER: You might have different preferences regarding an editor
+    elif r['cmd'] == 'openeditor':
+        subprocess.Popen(["x-terminal-emulator", "-e", "sensible-editor", r['path']])

@@ -23,5 +23,8 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 	} else if (n.cmd === 'reloadfiles') {
 		port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
 		sendResponse();
+	} else if (n.cmd === 'openeditor') {
+		port.postMessage({cmd: 'openeditor', path: n.path});
+		sendResponse();
 	}
 });
