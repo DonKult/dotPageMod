@@ -60,3 +60,7 @@ while True:
             'lastmod': os.stat(filename).st_mtime,
             'filecontent': data,
         }))
+    # instead of trying to figure out if all cats are done in an async fashion,
+    # we let the app send an explicit done last
+    elif r['cmd'] == 'done?':
+        sendMessage(encodeMessage({'cmd': 'doneresult'}))

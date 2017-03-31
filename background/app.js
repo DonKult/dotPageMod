@@ -27,6 +27,7 @@ const handleListResult = r => {
 	});
 	db.then(db => {
 		unregisterPageMods();
+		let cating = false;
 		let os = db.transaction(['files'], 'readwrite').objectStore('files');
 		os.openCursor().onsuccess = e => {
 			const cursor = e.target.result;
@@ -45,12 +46,17 @@ const handleListResult = r => {
 											'hostname': hostname,
 											'filename': filename,
 										});
+										cating = true;
 									}
 								}
 							}
 						}
 					}
 				}
+				if (cating === false)
+					applyToOpenTabs();
+				else
+					port.postMessage({'cmd': 'done?'});
 				return;
 			}
 			if (files[cursor.key[0]] === undefined ||
@@ -68,6 +74,7 @@ const handleListResult = r => {
 						'hostname': cursor.key[1],
 						'filename': cursor.key[2],
 					});
+					cating = true;
 				} else {
 					registerAddedPageModFile(cursor.key);
 				}

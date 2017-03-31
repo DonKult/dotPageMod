@@ -7,6 +7,8 @@ port.onMessage.addListener(r => {
 		db.then(handleCatResult(r), errorlog);
 	} else if (r.cmd === 'listresult') {
 		handleListResult(r);
+	} else if (r.cmd === 'doneresult') {
+		applyToOpenTabs();
 	}
 });
 port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});

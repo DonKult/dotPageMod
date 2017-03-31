@@ -96,3 +96,28 @@ const unregisterPageMods = () => {
 			browser.webNavigation.onCommitted.removeListener(hostlistener[listener]);
 	hostlistener = {};
 };
+const callHostListener = (host, tab) => {
+	if (hostlistener.hasOwnProperty(host)) {
+		hostlistener[host]({'tabId': tab.id, 'frameId': 0});
+	}
+};
+const applyToOpenTabs = () => {
+	browser.tabs.query({}).then(tabs => tabs.forEach(tab => {
+		// tabs which aren't loaded have no size, don't execute scripts on them
+		if (tab.width === 0 && tab.height === 0)
+			return;
+		const u = tab.url.split('/', 3);
+		if (u[0] === 'http:' || u[0] === 'https:' || u[0] === 'ftp:') {
+			callHostListener('ALL', tab);
+			u[2].split('.').reverse().reduce((a,v,i) => {
+				if (i === 0)
+					return [ v ];
+				else {
+					a.push([v,a[i-1]].join('.'));
+					return a;
+				}
+			},[]).forEach(host => callHostListener(host, tab));
+		} else if (u[0] === 'file:')
+			callHostListener('ALL_file', tab);
+	}));
+};
