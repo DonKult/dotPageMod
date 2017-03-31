@@ -61,7 +61,7 @@ const registerAddedPageModFile = key => {
 			let filters;
 			if (host === 'ALL') {
 				// This avoids Firefox trying to act on about: pages where we fail to insert scripts
-				filters = { url: [ { schemes: [ "https", "http", "file", "ftp" ] } ] };
+				filters = { url: [ { schemes: [ "https", "http" ] } ] };
 			} else if (host.startsWith('ALL_')) {
 				filters = { url: [ { schemes: [ host.substr(4) ] } ] };
 			} else {
@@ -108,15 +108,21 @@ const applyToOpenTabs = () => {
 			return;
 		const u = tab.url.split('/', 3);
 		if (u[0] === 'http:' || u[0] === 'https:' || u[0] === 'ftp:') {
-			callHostListener('ALL', tab);
+			// this builds an array like [ ALL, com, example.com, foo.example.com ]
+			let preset;
+			if (u[0] === 'ftp:')
+				preset = [ 'ALL_ftp' ];
+			else if (u[0] === 'https:')
+				preset = [ 'ALL', 'ALL_https' ];
+			else
+				preset = [ 'ALL', 'ALL_http' ];
 			u[2].split('.').reverse().reduce((a,v,i) => {
 				if (i === 0)
-					return [ v ];
-				else {
-					a.push([v,a[i-1]].join('.'));
-					return a;
-				}
-			},[]).forEach(host => callHostListener(host, tab));
+					a.push(v);
+				else
+					a.push([v,a[a.length - 1]].join('.'));
+				return a;
+			}, preset).forEach(host => callHostListener(host, tab));
 		} else if (u[0] === 'file:')
 			callHostListener('ALL_file', tab);
 	}));
