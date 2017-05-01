@@ -22,11 +22,27 @@ const updateTabInfo = (tabId, file, good) => {
 		browser.browserAction.setBadgeText({'text': '' + i, 'tabId': tabId});
 	browser.browserAction.setBadgeBackgroundColor({'color': allgood ? 'black' : 'red', 'tabId': tabId});
 };
+const SendDetachMessageToTab = tab => {
+	return browser.tabs.sendMessage(parseInt(tab), { 'cmd': 'detach' }).catch(e => {
+		// sending detach fails if the content script has no listener, so just ignore it
+		return Promise.resolve();
+	});
+};
+const sendDetachToTabs = () => {
+	let d = [];
+	for (let tab in tabInfo)
+		if (tabInfo.hasOwnProperty(tab)) {
+			d.push(SendDetachMessageToTab(tab));
+			delete tabInfo[tab];
+		}
+	tabInfo = {};
+	return Promise.all(d);
+};
+
 browser.tabs.onRemoved.addListener(tab => {
 	if (tabInfo[tab.id] !== undefined)
 		delete tabInfo[tab.id];
 });
-
 browser.webNavigation.onCommitted.addListener(d => {
 	if (d.frameId !== 0)
 		return;

@@ -25,8 +25,7 @@ const handleListResult = r => {
 			files[f.collection][f.hostname] = {};
 		files[f.collection][f.hostname][f.filename] = f.lastmod;
 	});
-	db.then(db => {
-		unregisterPageMods();
+	db.then(db => unregisterPageMods(db).then(() => {
 		let cating = false;
 		let os = db.transaction(['files'], 'readwrite').objectStore('files');
 		os.openCursor().onsuccess = e => {
@@ -82,5 +81,5 @@ const handleListResult = r => {
 			}
 			cursor.continue();
 		};
-	}, errorlog);
+	}), errorlog);
 };

@@ -4,7 +4,6 @@ let hostlistener = {};
 
 const executePageMod = (tabId, runat, p) => {
 	const opt = {
-		'allFrames': false,
 		'runAt': runat,
 		'code': p.content,
 	};
@@ -14,37 +13,55 @@ const executePageMod = (tabId, runat, p) => {
 	else //if (p.type === 'css')
 		s = browser.tabs.insertCSS(tabId, opt);
 	const filename = p.collection + '/' + p.hostname + '/' + p.filename;
-	s.then(() => updateTabInfo(tabId, filename, true),
-		() => updateTabInfo(tabId, filename, false));
-	return s;
+	return s.then(
+		() => updateTabInfo(tabId, filename, true),
+		() => updateTabInfo(tabId, filename, false)
+	);
 };
-const executePageModsForHost = (db, host) => details => {
+const removePageMod = (tabId, p) => {
+	if (p.type === 'css')
+		return browser.tabs.removeCSS(tabId, { 'code': p.content });
+};
+const executePageModsForHost = (db, host, runOnFramework, runOnHost) => details => {
 	// we want to act only on pages, not on all their (i)frames.
 	if (details.frameId !== 0)
 		return;
 	const css_framework = hostmap[host].css.length !== 0;
 	const js_framework = hostmap[host].js.length !== 0;
 	const i = db.transaction(['files'], 'readonly').objectStore('files').index("hostname");
+	let pagemods = [];
 	if (css_framework || js_framework) {
-		i.openCursor(IDBKeyRange.only("FRAMEWORK")).onsuccess = e => {
+		pagemods.push(new Promise((resolve, reject) => {
+			const req = i.openCursor(IDBKeyRange.only("FRAMEWORK"));
+			let pagefiles = [];
+			req.onsuccess = e => {
+				const cursor = e.target.result;
+				if (cursor === null) {
+					resolve(Promise.all(pagefiles));
+					return;
+				}
+				if ((cursor.value.type === 'js' && js_framework) || (cursor.value.type === 'css' && css_framework))
+					pagefiles.push(runOnFramework(details.tabId, cursor.value));
+				cursor.continue();
+			};
+			req.onerror = e => reject(e);
+		}));
+	}
+	pagemods.push(new Promise((resolve, reject) => {
+		const req = i.openCursor(IDBKeyRange.only(host));
+		let pagefiles = [];
+		req.onsuccess = e => {
 			const cursor = e.target.result;
-			if (cursor === null)
+			if (cursor === null) {
+				resolve(Promise.all(pagefiles));
 				return;
-			if ((cursor.value.type === 'js' && js_framework) || (cursor.value.type === 'css' && css_framework))
-				executePageMod(details.tabId, 'document_start', cursor.value);
+			}
+			pagefiles.push(runOnHost(details.tabId, cursor.value));
 			cursor.continue();
 		};
-	}
-	i.openCursor(IDBKeyRange.only(host)).onsuccess = e => {
-		const cursor = e.target.result;
-		if (cursor === null)
-			return;
-		if (cursor.value.type === 'js')
-			executePageMod(details.tabId, 'document_end', cursor.value);
-		else if (cursor.value.type === 'css')
-			executePageMod(details.tabId, 'document_start', cursor.value);
-		cursor.continue();
-	};
+		req.onerror = e => reject(e);
+	}));
+	return Promise.all(pagemods);
 };
 const registerAddedPageModFile = key => {
 	const host = key[1];
@@ -80,7 +97,15 @@ const registerAddedPageModFile = key => {
 				}
 			}
 			db.then(db => {
-				hostlistener[host] = executePageModsForHost(db, host);
+				hostlistener[host] = executePageModsForHost(db, host,
+					(tabId, value) => executePageMod(tabId, 'document_start', value),
+					(tabId, value) => {
+						if (value.type === 'js')
+							return executePageMod(tabId, 'document_end', value);
+						else if (value.type === 'css')
+							return executePageMod(tabId, 'document_start', value);
+					}
+				);
 				browser.webNavigation.onCommitted.addListener(
 					hostlistener[host], filters
 				);
@@ -89,25 +114,15 @@ const registerAddedPageModFile = key => {
 	}
 	hostmap[host][type].push(key);
 };
-const unregisterPageMods = () => {
-	hostmap = { "FRAMEWORK": { js: [], css: [] } };
-	for (let listener in hostlistener)
-		if (hostlistener.hasOwnProperty(listener))
-			browser.webNavigation.onCommitted.removeListener(hostlistener[listener]);
-	hostlistener = {};
-};
-const callHostListener = (host, tab) => {
-	if (hostlistener.hasOwnProperty(host)) {
-		hostlistener[host]({'tabId': tab.id, 'frameId': 0});
-	}
-};
-const applyToOpenTabs = () => {
-	browser.tabs.query({}).then(tabs => tabs.forEach(tab => {
+const removePageModsForHost = (db, host, details) => executePageModsForHost(db, host, removePageMod, removePageMod)(details);
+const runOnOpenTabs = runOnHost => {
+	return browser.tabs.query({}).then(tabs => Promise.all(tabs.map(tab => {
 		// tabs which aren't loaded have no size, don't execute scripts on them
 		if (tab.width === 0 && tab.height === 0)
 			return;
 		if (tab.id === tabs.TAB_ID_NONE)
 			return;
+		let pros = [];
 		const u = tab.url.split('/', 3);
 		if (u[0] === 'http:' || u[0] === 'https:' || u[0] === 'ftp:') {
 			// this builds an array like [ ALL, com, example.com, foo.example.com ]
@@ -118,14 +133,36 @@ const applyToOpenTabs = () => {
 				preset = [ 'ALL', 'ALL_https' ];
 			else
 				preset = [ 'ALL', 'ALL_http' ];
-			u[2].split('.').reverse().reduce((a,v,i) => {
+			Array.prototype.push.apply(pros, u[2].split('.').reverse().reduce((a,v,i) => {
 				if (i === 0)
 					a.push(v);
 				else
 					a.push([v,a[a.length - 1]].join('.'));
 				return a;
-			}, preset).forEach(host => callHostListener(host, tab));
+			}, preset).map(host => runOnHost(host, tab)));
 		} else if (u[0] === 'file:')
-			callHostListener('ALL_file', tab);
-	}));
+			pros.push(runOnHost('ALL_file', tab));
+		return Promise.all(pros);
+	})));
 };
+const callHostRemover = (db) => (host, tab) => {
+	if (hostlistener.hasOwnProperty(host))
+		return removePageModsForHost(db, host, { 'tabId': tab.id, 'frameId': 0 });
+};
+const unregisterPageMods = db => {
+	for (let listener in hostlistener)
+		if (hostlistener.hasOwnProperty(listener))
+			browser.webNavigation.onCommitted.removeListener(hostlistener[listener]);
+	return Promise.all([
+		sendDetachToTabs(),
+		runOnOpenTabs(callHostRemover(db)).then(() => {
+			hostmap = { "FRAMEWORK": { js: [], css: [] } };
+			hostlistener = {};
+		})
+	]);
+};
+const callHostListener = (host, tab) => {
+	if (hostlistener.hasOwnProperty(host))
+		return hostlistener[host]({'tabId': tab.id, 'frameId': 0});
+};
+const applyToOpenTabs = () => runOnOpenTabs(callHostListener);
