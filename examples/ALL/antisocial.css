@@ -7,7 +7,8 @@
 .sharethis,
 .sharedaddy,
 .sidebar-social-plugins,
-.follow-us
+.follow-us,
+.shariff
 {
-	display: none;
+	display: none !important;
 }
