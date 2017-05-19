@@ -14,9 +14,9 @@ const handleCatResult = r => db => {
 	db.transaction(['files'], 'readwrite').objectStore('files').put(makePageModFile(
 		r.collection, r.hostname, r.filename, type, r.lastmod,
 		prefix + r.filecontent + suffix
-	)).onsuccess = e => registerAddedPageModFile(e.target.result);
+	)).onsuccess = e => registerAddedPageModFile(db, e.target.result);
 };
-const handleListResult = r => {
+const handleListResult = r => db => {
 	let files = {};
 	r.results.forEach(f => {
 		if (files[f.collection] === undefined)
@@ -25,7 +25,7 @@ const handleListResult = r => {
 			files[f.collection][f.hostname] = {};
 		files[f.collection][f.hostname][f.filename] = f.lastmod;
 	});
-	db.then(db => unregisterPageMods(db).then(() => {
+	unregisterPageMods(db).then(() => {
 		let cating = false;
 		let os = db.transaction(['files'], 'readwrite').objectStore('files');
 		os.openCursor().onsuccess = e => {
@@ -75,11 +75,11 @@ const handleListResult = r => {
 					});
 					cating = true;
 				} else {
-					registerAddedPageModFile(cursor.key);
+					registerAddedPageModFile(db, cursor.key);
 				}
 				delete files[cursor.key[0]][cursor.key[1]][cursor.key[2]];
 			}
 			cursor.continue();
 		};
-	}), errorlog);
+	});
 };

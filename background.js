@@ -6,12 +6,11 @@ port.onMessage.addListener(r => {
 	if (r.cmd === 'catresult') {
 		db.then(handleCatResult(r), errorlog);
 	} else if (r.cmd === 'listresult') {
-		handleListResult(r);
+		db.then(handleListResult(r), errorlog);
 	} else if (r.cmd === 'doneresult') {
 		applyToOpenTabs();
 	}
 });
-port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
 
 browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 	if (n.cmd === 'notify') {
@@ -28,3 +27,4 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 		sendResponse();
 	}
 });
+port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});

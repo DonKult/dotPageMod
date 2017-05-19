@@ -63,7 +63,7 @@ const executePageModsForHost = (db, host, runOnFramework, runOnHost) => details 
 	}));
 	return Promise.all(pagemods);
 };
-const registerAddedPageModFile = key => {
+const registerAddedPageModFile = (db, key) => {
 	const host = key[1];
 	let type;
 	if (key[2].endsWith('.js'))
@@ -96,20 +96,18 @@ const registerAddedPageModFile = key => {
 					] };
 				}
 			}
-			db.then(db => {
-				hostlistener[host] = executePageModsForHost(db, host,
-					(tabId, value) => executePageMod(tabId, 'document_start', value),
-					(tabId, value) => {
-						if (value.type === 'js')
-							return executePageMod(tabId, 'document_end', value);
-						else if (value.type === 'css')
-							return executePageMod(tabId, 'document_start', value);
-					}
-				);
-				browser.webNavigation.onCommitted.addListener(
-					hostlistener[host], filters
-				);
-			});
+			hostlistener[host] = executePageModsForHost(db, host,
+				(tabId, value) => executePageMod(tabId, 'document_start', value),
+				(tabId, value) => {
+					if (value.type === 'js')
+						return executePageMod(tabId, 'document_end', value);
+					else if (value.type === 'css')
+						return executePageMod(tabId, 'document_start', value);
+				}
+			);
+			browser.webNavigation.onCommitted.addListener(
+				hostlistener[host], filters
+			);
 		}
 	}
 	hostmap[host][type].push(key);
@@ -145,7 +143,7 @@ const runOnOpenTabs = runOnHost => {
 		return Promise.all(pros);
 	})));
 };
-const callHostRemover = (db) => (host, tab) => {
+const callHostRemover = db => (host, tab) => {
 	if (hostlistener.hasOwnProperty(host))
 		return removePageModsForHost(db, host, { 'tabId': tab.id, 'frameId': 0 });
 };
