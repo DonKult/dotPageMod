@@ -22,6 +22,22 @@ const removePageMod = (tabId, p) => {
 	if (p.type === 'css')
 		return browser.tabs.removeCSS(tabId, { 'code': p.content });
 };
+const promiseRunOnCursor = (index, key, runon) => {
+	return new Promise((resolve, reject) => {
+		const req = index.openCursor(IDBKeyRange.only(key));
+		let pagefiles = [];
+		req.onsuccess = e => {
+			const cursor = e.target.result;
+			if (cursor === null) {
+				resolve(Promise.all(pagefiles));
+				return;
+			}
+			pagefiles.push(runon(cursor.value));
+			cursor.continue();
+		};
+		req.onerror = e => reject(e);
+	});
+};
 const executePageModsForHost = (db, host, runOnFramework, runOnHost) => details => {
 	// we want to act only on pages, not on all their (i)frames.
 	if (details.frameId !== 0)
@@ -31,36 +47,13 @@ const executePageModsForHost = (db, host, runOnFramework, runOnHost) => details 
 	const i = db.transaction(['files'], 'readonly').objectStore('files').index("hostname");
 	let pagemods = [];
 	if (css_framework || js_framework) {
-		pagemods.push(new Promise((resolve, reject) => {
-			const req = i.openCursor(IDBKeyRange.only("FRAMEWORK"));
-			let pagefiles = [];
-			req.onsuccess = e => {
-				const cursor = e.target.result;
-				if (cursor === null) {
-					resolve(Promise.all(pagefiles));
-					return;
-				}
-				if ((cursor.value.type === 'js' && js_framework) || (cursor.value.type === 'css' && css_framework))
-					pagefiles.push(runOnFramework(details.tabId, cursor.value));
-				cursor.continue();
-			};
-			req.onerror = e => reject(e);
+		pagemods.push(promiseRunOnCursor(i, "FRAMEWORK", value => {
+			if ((value.type === 'js' && js_framework) || (value.type === 'css' && css_framework))
+				return runOnFramework(details.tabId, value);
+			return Promise.resolve();
 		}));
 	}
-	pagemods.push(new Promise((resolve, reject) => {
-		const req = i.openCursor(IDBKeyRange.only(host));
-		let pagefiles = [];
-		req.onsuccess = e => {
-			const cursor = e.target.result;
-			if (cursor === null) {
-				resolve(Promise.all(pagefiles));
-				return;
-			}
-			pagefiles.push(runOnHost(details.tabId, cursor.value));
-			cursor.continue();
-		};
-		req.onerror = e => reject(e);
-	}));
+	pagemods.push(promiseRunOnCursor(i, host, value => runOnHost(details.tabId, value)));
 	return Promise.all(pagemods);
 };
 const registerAddedPageModFile = (db, key) => {
@@ -148,16 +141,17 @@ const callHostRemover = db => (host, tab) => {
 		return removePageModsForHost(db, host, { 'tabId': tab.id, 'frameId': 0 });
 };
 const unregisterPageMods = db => {
+	let list = [];
 	for (let listener in hostlistener)
 		if (hostlistener.hasOwnProperty(listener))
-			browser.webNavigation.onCommitted.removeListener(hostlistener[listener]);
-	return Promise.all([
+			list.push(browser.webNavigation.onCommitted.removeListener(hostlistener[listener]));
+	return Promise.all(list).then(() => Promise.all([
 		sendDetachToTabs(),
 		runOnOpenTabs(callHostRemover(db)).then(() => {
 			hostmap = { "FRAMEWORK": { js: [], css: [] } };
 			hostlistener = {};
 		})
-	]);
+	]));
 };
 const callHostListener = (host, tab) => {
 	if (hostlistener.hasOwnProperty(host))
