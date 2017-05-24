@@ -106,22 +106,6 @@ the website to have permission for it, but our scripts are written by the user,
 so permission is implicitly given – and independent from the permission status
 of the website.
 
-### running a hostscript
-
-	self.port.emit("dotpagemod/run", 'script.run@1', [ '-q', window.location ] );
-	self.port.on("dotpagemod/run/script.run@1/stdout", data => {});
-	self.port.on("dotpagemod/run/script.run@1/stderr", data => {});
-	self.port.on("dotpagemod/run/script.run@1/close", (code, signal) => {});
-	self.port.on("dotpagemod/run/script.run@1/error", (code) => {});
-	self.port.emit("dotpagemod/run/script.run@1/stdin/data", '');
-	self.port.emit("dotpagemod/run/script.run@1/stdin/end");
-
-*Note*: A hostscript provides you with enormous power – be very careful!
-While spawning multiple instances of the same script is possible, this just
-skyrockets the complexity of your content scripts, so at that point in time
-you should seriously consider writing a standalone extension… – in fact,
-you should consider it before writing the first line using this.
-
 ### bring tab to foreground of the window
 
 	self.port.emit('dotpagemod/tab/activate');
