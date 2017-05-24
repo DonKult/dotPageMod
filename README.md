@@ -11,8 +11,6 @@ to load local CSS and JavaScript into webpages.
   each user
 * the hostname directories itself can be stored in independent packs for easier
   sharing and syncing (e.g. private, public, work, home, …)
-* additional resources (images, fonts, …) in this directory are accessible as
-  usual from CSS – no need for data: or online sources
 * port specific hosts with `hostname_port`
 * hostnames like `mozilla.org` match `developer.mozilla.org`
 * in fact: `org` matches all hosts in that top-level domain, too
@@ -136,6 +134,24 @@ you should consider it before writing the first line using this.
 *Note*: The first option requires the website to have popup permissions, while
 the second can have a 'confusing' new-window behavior for private tabs.
 Experiment to figure out what works best for you.
+
+### embedding images and co in CSS
+
+#### SVG
+
+URL encoding is enough here and has the benefit of allowing modifications still,
+the encoded string can be used as `url(data:image/svg+xml,ENCODED)`.
+
+	perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "to encode"
+	echo 'to decode' | awk -niord '{printf RT?$0chr("0x"substr(RT,2)):$0}' RS=%..
+
+(Source for [encode](https://stackoverflow.com/questions/296536/how-to-urlencode-data-for-curl-command/298258#298258)
+and [decode](https://unix.stackexchange.com/questions/159253/decoding-url-encoding-percent-encoding/159373#159373) commands)
+
+#### binary image formats and other things
+
+The URI needs to be `url(data:image/TYPE;base64,ENCODED)`.
+Encoding can be done with `base64 -w 0 < image.file`.
 
 ## Examples
 
