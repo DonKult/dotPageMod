@@ -9,8 +9,15 @@ const handleCatResult = r => db => {
 	else
 		return;
 	const filepath = DOTPAGEMOD_PATH + '/' + r.collection + '/' + r.hostname + '/' + r.filename;
-	const prefix = type === 'js' ? '"use strict";\n' : '';
-	const suffix = '\n/*# sourceURL=file://' + filepath + ' */\n';
+	let prefix = '', suffix = '\n';
+	if (type === 'js') {
+		if (r.hostname !== 'FRAMEWORK') {
+			prefix += '(function(){';
+			suffix += '})();';
+		}
+		prefix += '"use strict";\n';
+	}
+	suffix += '/*# sourceURL=file://' + filepath + ' */\n';
 	db.transaction(['files'], 'readwrite').objectStore('files').put(makePageModFile(
 		r.collection, r.hostname, r.filename, type, r.lastmod,
 		prefix + r.filecontent + suffix
