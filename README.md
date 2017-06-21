@@ -106,18 +106,26 @@ the website to have permission for it, but our scripts are written by the user,
 so permission is implicitly given – and independent from the permission status
 of the website.
 
-### bring tab to foreground of the window
+### modifying current tab (pin, active, mute, reload, close, …)
 
-	self.port.emit('dotpagemod/tab/activate');
+	browser.runtime.sendMessage('tab/activate');
+	browser.runtime.sendMessage('tab/pin');
+	browser.runtime.sendMessage('tab/unpin');
+	browser.runtime.sendMessage('tab/mute');
+	browser.runtime.sendMessage('tab/unmute');
+	browser.runtime.sendMessage({ cmd: 'tab/url', url: 'https://example.org'});
+	browser.runtime.sendMessage('tab/close');
+	browser.runtime.sendMessage('tab/reload');
+	browser.runtime.sendMessage('tab/force-reload');
 
-### [open a new tab](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/tabs#open%28options%29)
+### open a new tab
 
 	window.open(url, '_blank');
-	self.port.emit('dotpagemod/tab/open', url, { isPrivate, inNewWindow, inBackground, isPinned });
+	browser.runtime.sendMessage({ cmd: 'tab/open', active: true, pinned: false, window: 'tab', url: 'https://example.org' });
 
-*Note*: The first option requires the website to have popup permissions, while
-the second can have a 'confusing' new-window behavior for private tabs.
-Experiment to figure out what works best for you.
+*Note*: The first option requires the website to have popup permissions.
+The second is less simple, but can open tabs in the 'current' window or in the
+window the tab belongs to the script runs in (default).
 
 ### embedding images and co in CSS
 
