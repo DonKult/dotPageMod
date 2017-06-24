@@ -7,21 +7,25 @@ const handleCatResult = r => db => {
 	else if (r.filename.endsWith('.css'))
 		type = 'css';
 	else
-		return;
-	const filepath = DOTPAGEMOD_PATH + '/' + r.collection + '/' + r.hostname + '/' + r.filename;
-	let prefix = '', suffix = '\n';
-	if (type === 'js') {
-		if (r.hostname !== 'FRAMEWORK') {
-			prefix += '(function(){';
-			suffix += '})();';
+		return Promise.resolve();
+	return new Promise((resolve, reject) => {
+		const filepath = DOTPAGEMOD_PATH + '/' + r.collection + '/' + r.hostname + '/' + r.filename;
+		let prefix = '', suffix = '\n';
+		if (type === 'js') {
+			if (r.hostname !== 'FRAMEWORK') {
+				prefix += '(function(){';
+				suffix += '})();';
+			}
+			prefix += '"use strict";\n';
 		}
-		prefix += '"use strict";\n';
-	}
-	suffix += '/*# sourceURL=file://' + filepath + ' */\n';
-	db.transaction(['files'], 'readwrite').objectStore('files').put(makePageModFile(
-		r.collection, r.hostname, r.filename, type, r.lastmod,
-		prefix + r.filecontent + suffix
-	)).onsuccess = e => registerAddedPageModFile(db, e.target.result);
+		suffix += '/*# sourceURL=file://' + filepath + ' */\n';
+		let req = db.transaction(['files'], 'readwrite').objectStore('files').put(makePageModFile(
+			r.collection, r.hostname, r.filename, type, r.lastmod,
+			prefix + r.filecontent + suffix
+		));
+		req.onsuccess = e => resolve(registerPageModFile(db, e.target.result));
+		req.onerror = e => reject(e);
+	});
 };
 const handleListResult = r => db => {
 	let files = {};
@@ -32,10 +36,12 @@ const handleListResult = r => db => {
 			files[f.collection][f.hostname] = {};
 		files[f.collection][f.hostname][f.filename] = f.lastmod;
 	});
-	unregisterPageMods(db).then(() => {
-		let cating = false;
+	return new Promise((resolve, reject) => {
 		let os = db.transaction(['files'], 'readwrite').objectStore('files');
-		os.openCursor().onsuccess = e => {
+		let removeTriggered = {};
+		let actions = [];
+		const req = os.openCursor();
+		req.onsuccess = e => {
 			const cursor = e.target.result;
 			if (cursor === null) {
 				// get all new files into the storage
@@ -52,24 +58,26 @@ const handleListResult = r => db => {
 											'hostname': hostname,
 											'filename': filename,
 										});
-										cating = true;
 									}
 								}
 							}
 						}
 					}
 				}
-				if (cating === false)
-					applyToOpenTabs();
-				else
-					port.postMessage({'cmd': 'done?'});
+				port.postMessage({'cmd': 'done?'});
+				resolve(Promise.all(actions));
 				return;
 			}
 			if (files[cursor.key[0]] === undefined ||
-				files[cursor.key[0]][cursor.key[1]] === undefined ||
-				files[cursor.key[0]][cursor.key[1]][cursor.key[2]] === undefined) {
+					files[cursor.key[0]][cursor.key[1]] === undefined ||
+					files[cursor.key[0]][cursor.key[1]][cursor.key[2]] === undefined) {
 				// the file is no longer on disk, so remove it from db storage as well
-				os.delete(cursor.key);
+				actions.push(unregisterPageModFile(cursor.key, cursor.value));
+				actions.push(new Promise((resolve,reject) => {
+					let req = cursor.delete();
+					req.onsuccess = e => resolve(cursor.key);
+					req.onerror = e => reject(e);
+				}));
 			} else {
 				// we have the file on record, but perhaps not the latest version
 				if (files[cursor.key[0]][cursor.key[1]][cursor.key[2]] > cursor.value.lastmod) {
@@ -80,13 +88,13 @@ const handleListResult = r => db => {
 						'hostname': cursor.key[1],
 						'filename': cursor.key[2],
 					});
-					cating = true;
-				} else {
-					registerAddedPageModFile(db, cursor.key);
-				}
+					actions.push(unregisterPageModFile(cursor.key, cursor.value));
+				} else
+					actions.push(registerPageModFile(db, cursor.key));
 				delete files[cursor.key[0]][cursor.key[1]][cursor.key[2]];
 			}
 			cursor.continue();
 		};
+		req.onerror = e => reject(e);
 	});
 };

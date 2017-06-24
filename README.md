@@ -80,7 +80,7 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 	if (window.location.pathname === '/Style/')
 	if (window.location.pathname.startsWith('/Style/'))
 
-### [undo changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
+### undo changes
 
 	browser.runtime.onMessage.addListener(l => {
 		if (l.cmd !== 'detach') return;
@@ -90,11 +90,20 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 *Note*: The example nano-framework has some wrappers and examples to undo common
 changes like event handlers, style toggles and removal of added elements.
 
+*Note*: If a CSS file is changed and config reloaded the old CSS will be
+cleanly removed from open tabs and the new one applied. The situation is more
+complicated for JS: Individual files can't be unapplied (obviously), so in
+this case the tab gets the detach message described above and all JS files effecting
+this tab are reapplied. If the scripts effecting this tab have no clean detach
+behaviour you might be better off reloading the page to get a fresh start.
+
 *Beware*: This doesn't work on addon update/removal as there is no API for it.
 The closest might be [onSuspend](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/runtime/onSuspend)
 but it is neither implemented in Firefox nor a good drop-in as it can still be cancelled
 and comes with no runtime guarantees whatsoever. I really hope browser vendors will make
-up their mind on this as this doesn't feel like a good user experience.
+up their mind on this as this doesn't feel like a good user experience. On the upside,
+you are hopefully don't need to update the extension itself all to often – and of course
+never need to remove it. ;)
 
 ### showing desktop notifications
 

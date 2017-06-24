@@ -3,17 +3,18 @@ const db = getDatabaseConnection();
 const port = browser.runtime.connectNative('dotpagemod_app');
 
 port.onMessage.addListener(r => {
+	let ret;
 	if (r.cmd === 'catresult') {
-		db.then(handleCatResult(r), errorlog);
+		ret = db.then(handleCatResult(r), errorlog);
 	} else if (r.cmd === 'listresult') {
-		db.then(handleListResult(r), errorlog);
+		ret = db.then(handleListResult(r), errorlog);
 	} else if (r.cmd === 'doneresult') {
-		applyToOpenTabs();
+		ret = applyToOpenTabs();
 	}
 });
 
 browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
-	let ret = null;
+	let ret;
 	if (typeof n === 'string') {
 		n = { 'cmd': n };
 	}
@@ -63,7 +64,7 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 				console.warn("got an unknown tab action from tab", sender.tab.id, n);
 				return;
 			}
-			if (ret === null)
+			if (ret === undefined)
 				ret = browser.tabs.update(sender.tab.id, action);
 		} else {
 			console.warn("got tab action, but not from a valid sender", n, sender);
@@ -76,6 +77,9 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 	}
 	else
 		return;
-	ret.then(() => sendResponse());
+	if (ret === undefined)
+		sendResponse();
+	else
+		ret.then(() => sendResponse());
 });
 port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
