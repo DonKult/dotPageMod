@@ -1,20 +1,18 @@
 #!/usr/bin/env python
 import json
+import time
 import struct
 import sys
 import os
 import subprocess
 from glob import glob
-
-
-# Read a message from stdin and decode it.
-def getMessage():
-    rawLength = sys.stdin.read(4)
-    if len(rawLength) == 0:
-        sys.exit(0)
-    messageLength = struct.unpack('@I', rawLength)[0]
-    message = sys.stdin.read(messageLength)
-    return json.loads(message)
+from AsynchronousFileReader import AsynchronousJSONReader, AsynchronousInotifyReader
+try:
+    # Python 2
+    from Queue import Queue
+except ImportError:
+    # Python 3
+    from queue import Queue
 
 
 # Encode a message for transmission, given its content.
@@ -31,11 +29,21 @@ def sendMessage(encodedMessage):
     sys.stdout.flush()
 
 
+queue = Queue()
+browser = AsynchronousJSONReader(sys.stdin, queue)
+inotify_process = None
+inotify_path = None
+inotify = None
 while True:
-    r = getMessage()
+    r = queue.get()
     if r['cmd'] == 'list':
+        if inotify:
+            time.sleep(0.1)
+            inotify.clearPending()
         results = []
-        for filename in glob(r['path'] + '/*/*/*'):
+        if not inotify_path:
+            inotify_path = r['path']
+        for filename in glob(inotify_path + '/*/*/*'):
             if filename.endswith('.js') or filename.endswith('.css'):
                 key = filename.split('/')[-3:]
                 results.append({
@@ -48,6 +56,11 @@ while True:
             'cmd': 'listresult',
             'results': results,
         }))
+        if not inotify:
+            inotify_process = subprocess.Popen(['inotifywait', '-qrme', 'create,move,modify,delete',
+                '--exclude', '^.*(\.sw[opx]|~|[0-9]+)$',  # ignore vim swap files, backups and inodes
+                inotify_path], stdout=subprocess.PIPE)
+            inotify = AsynchronousInotifyReader(inotify_process.stdout, queue)
     elif r['cmd'] == 'cat':
         filename = os.path.join(r['path'], r['collection'], r['hostname'], r['filename'])
         data = ''
@@ -65,6 +78,11 @@ while True:
     # we let the app send an explicit done last
     elif r['cmd'] == 'done?':
         sendMessage(encodeMessage({'cmd': 'doneresult'}))
+    elif r['cmd'] == 'exit':
+        if inotify:
+            inotify_process.terminate()
+        sys.exit(0)
     # TODO USER: You might have different preferences regarding an editor
     elif r['cmd'] == 'openeditor':
         subprocess.Popen(["x-terminal-emulator", "-e", "sensible-editor", r['path']])
+    queue.task_done()
