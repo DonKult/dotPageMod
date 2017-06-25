@@ -1,6 +1,14 @@
 "use strict";
 const db = getDatabaseConnection();
 const port = browser.runtime.connectNative('dotpagemod_app');
+// tell the user if we couldn't connect to the native app
+const noNativeConnection = () => browser.tabs.create({'active': true, 'url': '/pages/nonative.html'});
+port.onDisconnect.addListener(noNativeConnection);
+const clearErrorPage = () => {
+	port.onDisconnect.removeListener(noNativeConnection);
+	port.onMessage.removeListener(clearErrorPage);
+};
+port.onMessage.addListener(clearErrorPage);
 
 port.onMessage.addListener(r => {
 	let ret;

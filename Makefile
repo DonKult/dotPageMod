@@ -1,7 +1,7 @@
 ADDON_PATH = $(shell readlink -f .)
 
 all xpi: README.html app/dotpagemod_app.json
-	zip -r dotpagemod.xpi app background examples panel background.js config.js icon.png manifest.json README.html
+	zip --must-match -r dotpagemod.xpi app background examples pages background.js config.js icon.png manifest.json README.html
 
 README.html: README.md
 	./prepare-release README

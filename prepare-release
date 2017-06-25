@@ -10,7 +10,17 @@ README)
 	TMPFILE="$(mktemp)"
 	test -n "$TMPFILE" || exit 1
 	trap "cd /; rm '$(escape_shell "$TMPFILE")';" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
-	echo '<html><head><title>dotPageMod: README</title><meta charset="utf-8" /></head><body>' > "${TMPFILE}"
+	cat <<EOF > "${TMPFILE}"
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>dotPageMod: README</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link id="favicon" rel="icon" type="image/png" href="/icon.png" />
+	</head><body>
+EOF
 	pandoc --to=html5 README.md >> "${TMPFILE}"
 	echo '</body></html>' >> "${TMPFILE}"
 	cp "${TMPFILE}" README.html
