@@ -1,14 +1,11 @@
 # ![Logo of dotPageMod](./icon.png) dotPageMod
 
-Firefox extension for user configuration powered
-[PageMods](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
-to load local CSS and JavaScript into webpages.
+Firefox [WebExtension](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+to load local CSS and JavaScript from your dotfiles into webpages.
 
 ## Features
 
-* each hostname has its own directory in a [config
-  directory](resource://dotpagemod-config/) residing in the firefox profile of
-  each user
+* each hostname has its own directory in your config directory of your own choosing
 * the hostname directories itself can be stored in independent packs for easier
   sharing and syncing (e.g. private, public, work, home, …)
 * port specific hosts with `hostname_port`
@@ -29,7 +26,8 @@ to load local CSS and JavaScript into webpages.
 * on Linux with inotifywait (packaged in Debian in _inotify-tools_) the addon
   will reload automatically on relevant changes in the config directory
 * a badge on the toolbar button indicates how many files modify the current tab.
-  A list of these files can be accessed in the panel.
+  A list of these files can be accessed in the panel. A red badge & filename
+  indicates a file couldn't be applied, e.g. due to a programming error in it.
 
 ## (Better?) Alternatives
 
@@ -102,7 +100,7 @@ The closest might be [onSuspend](https://developer.mozilla.org/en-US/Add-ons/Web
 but it is neither implemented in Firefox nor a good drop-in as it can still be cancelled
 and comes with no runtime guarantees whatsoever. I really hope browser vendors will make
 up their mind on this as this doesn't feel like a good user experience. On the upside,
-you are hopefully don't need to update the extension itself all to often – and of course
+you hopefully don't need to update the extension itself all too often – and of course
 never need to remove it. ;)
 
 ### showing desktop notifications
@@ -200,9 +198,16 @@ addon into the review queue as it would just waste valuable reviewer time.
 That also means you have to run a Developer/Nightly edition of Firefox as it
 isn't signed.
 
-If that wasn't discouraging enough you have to install
-[jpm](https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/jpm) and
-[Pandoc](http://pandoc.org/) after which `make` will produce an xpi for you.
+If that wasn't discouraging enough for you git clone the repository onto your disk.
+You will want to choose a permanent location for simplicity as you are about to
+create a softlinks to the native application configuration file (at least that
+is what you need to do on Linux, see [Native messaging documentation](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging#App_manifest_location)
+for details). `make install` tries to do the right thing for your current user.
+
+After that you should be able to build the extension itself, which will need
+[Pandoc](http://pandoc.org/) and [zip](http://www.info-zip.org/Zip.html) installed.
+`make` will produce a `dotpagemod.xpi` file for you then, which you can install as
+an extension, e.g. via `about:addons` → `Install Add-on from File…`.
 
 ## Contributing aka Where are all the testcases?
 
@@ -218,6 +223,24 @@ alike that this addon is sufficiently small to not need automatic tests…
 You can treat the examples folder as well as your personal collection as a
 testcase – it is what I do. So, if you happen to want to provide a patch, feel
 free to implement an example for its use as well and fling it my way.
+
+## What is in the name?
+
+Back in early 2016 the best way to create a Firefox extension was to use the
+Add-on SDK. In the SDK an API called [page-mod](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
+was used to modify packages by inserting JS and CSS files. The SDK is no more
+and the API used by WebExtensions is entirely different, but the name stayed as
+the underlying idea remains true: Having a firefox extension which reads
+dotfiles and modifies pages with it.
+
+## Why isn't it working on about: pages or addons.mozilla.org?
+
+The reason is security. WebExtensions aren't allowed to insert code into
+privileged tabs like about: pages and a few other domains to avoid people
+being tricked by evil extensions and co. The older extension types didn't
+have such restrictions, so even my examples include files modifying
+_addons.mozilla.org_ which doesn't work at the moment. Perhaps one day
+there is a way to get them working again.
 
 ## Logo
 

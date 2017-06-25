@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "dotPageMod",
   "version": "0.0.2",
-  "description": "user configuration powered PageMods to load local CSS and JavaScript into webpages",
+  "description": "load local CSS and JavaScript from your dotfiles into webpages",
   "developer": {
     "name": "David Kalnischkies",
     "url": "https://david.kalnischkies.de/"
