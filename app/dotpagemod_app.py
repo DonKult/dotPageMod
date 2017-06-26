@@ -37,12 +37,15 @@ inotify = None
 while True:
     r = queue.get()
     if r['cmd'] == 'list':
-        if inotify:
+        if inotify and 'inotify' in r:
             time.sleep(0.1)
             inotify.clearPending()
         results = []
-        if not inotify_path:
+        if 'path' in r and inotify_path != r['path']:
             inotify_path = r['path']
+            if inotify:
+                inotify_process.terminate()
+                inotify = None
         for filename in glob(inotify_path + '/*/*/*'):
             if filename.endswith('.js') or filename.endswith('.css'):
                 key = filename.split('/')[-3:]

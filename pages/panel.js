@@ -16,6 +16,8 @@ for (let i = 0; i < buttons.length; ++i) {
 	buttons[i].addEventListener('click', buttonClickHandler);
 	buttons[i].disabled = false;
 }
+document.querySelector('h1').addEventListener('click',
+	() => browser.runtime.openOptionsPage().then(() => window.close()));
 
 const clickHandlerOpenEditor = e => {
 	e.preventDefault();
@@ -31,7 +33,7 @@ const updateFileListing = m => {
 		filelisting.removeChild(filelisting.firstChild);
 	document.querySelector('#browse-config').setAttribute('data-emit-param', m.baseuri);
 	if (m.files === undefined)
-		return;
+		m.files = {};
 	let filetree = {};
 	for (let file in m.files) {
 		if (m.files.hasOwnProperty(file)) {

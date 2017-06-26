@@ -90,4 +90,4 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 	else
 		ret.then(() => sendResponse());
 });
-port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
+getAndReloadConfigDirectory();

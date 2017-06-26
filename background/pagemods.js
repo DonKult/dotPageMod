@@ -137,8 +137,10 @@ const unregisterPageModFile = (key, value) => {
 	if (hostmap[host].js.length === 0 && hostmap[host].css.length === 0) {
 		if (host !== 'FRAMEWORK')
 			delete hostmap[host];
-		actions.push(browser.webNavigation.onCommitted.removeListener(hostlistener[host]));
-		delete hostlistener[host];
+		if (hostlistener.hasOwnProperty(host)) {
+			actions.push(browser.webNavigation.onCommitted.removeListener(hostlistener[host]));
+			delete hostlistener[host];
+		}
 	}
 	Array.prototype.push.apply(actions, tabInfoQuery(key.join('/')).map(tab => removePageMod(tab.id, value)));
 	return Promise.all(actions);

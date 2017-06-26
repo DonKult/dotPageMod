@@ -4,6 +4,7 @@ h1 {
 	color: rgb(187, 187, 187);
 	font-size: 0.7em;
 	padding: 0.2em 0px;
+	cursor: pointer;
 }
 ul {
 	padding-left: 1em;
@@ -36,6 +37,10 @@ button {
 	position: relative;
 	display: inline-block;
 	width: 50px;
+	cursor: pointer;
+}
+button:disabled {
+	cursor: inherit;
 }
 button .tooltip {
 	visibility: hidden;
