@@ -45,7 +45,7 @@ const tabInfoQuery = filename => {
 const isAlreadyInTab = (tabId, filename) => {
 	if (tabInfo.hasOwnProperty(tabId))
 		if (tabInfo[tabId].hasOwnProperty(filename))
-			return true;
+			return tabInfo[tabId][filename];
 	return false;
 };
 const sendDetachMessageToTab = tab => {
