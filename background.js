@@ -1,25 +1,6 @@
 "use strict";
 const db = getDatabaseConnection();
-const port = browser.runtime.connectNative('dotpagemod_app');
-// tell the user if we couldn't connect to the native app
-const noNativeConnection = () => browser.tabs.create({'active': true, 'url': '/pages/nonative.html'});
-port.onDisconnect.addListener(noNativeConnection);
-const clearErrorPage = () => {
-	port.onDisconnect.removeListener(noNativeConnection);
-	port.onMessage.removeListener(clearErrorPage);
-};
-port.onMessage.addListener(clearErrorPage);
-
-port.onMessage.addListener(r => {
-	let ret;
-	if (r.cmd === 'catresult') {
-		ret = db.then(handleCatResult(r), errorlog);
-	} else if (r.cmd === 'listresult') {
-		ret = db.then(handleListResult(r), errorlog);
-	} else if (r.cmd === 'doneresult') {
-		ret = applyToOpenTabs();
-	}
-});
+let port = startNativeApp();
 
 browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 	let ret;
@@ -78,12 +59,15 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 			console.warn("got tab action, but not from a valid sender", n, sender);
 			return;
 		}
-	} else if (n.cmd === 'reloadfiles') {
+	} else if (n.cmd === 'reloadfiles')
 		ret = port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
-	} else if (n.cmd === 'openeditor') {
-		ret = port.postMessage({cmd: 'openeditor', path: n.path});
-	}
-	else
+	else if (n.cmd === 'openeditor')
+		ret = port.postMessage({cmd: 'openeditor', path: n.param});
+	else if (n.cmd === 'restartapp') {
+		port.disconnect();
+		port = startNativeApp();
+		ret = port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
+	} else
 		return;
 	if (ret === undefined)
 		sendResponse();

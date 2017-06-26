@@ -24,7 +24,7 @@ const clickHandlerOpenEditor = e => {
 	if (e.target.href.startsWith('file://'))
 		browser.runtime.sendMessage({
 			'cmd': 'openeditor',
-			'path': e.target.href.substr(7)
+			'param': e.target.href
 		}).then(() => window.close());
 };
 const updateFileListing = m => {
@@ -32,8 +32,6 @@ const updateFileListing = m => {
 	while (filelisting.hasChildNodes())
 		filelisting.removeChild(filelisting.firstChild);
 	document.querySelector('#browse-config').setAttribute('data-emit-param', m.baseuri);
-	if (m.files === undefined)
-		m.files = {};
 	let filetree = {};
 	for (let file in m.files) {
 		if (m.files.hasOwnProperty(file)) {
@@ -87,6 +85,11 @@ const updateFileListing = m => {
 			filelisting.appendChild(packli);
 		}
 	}
+	if (filelisting.hasChildNodes())
+		return;
+	const li = document.createElement('li');
+	li.textContent = 'No dotfiles for to this page.';
+	filelisting.appendChild(li);
 };
 
 browser.tabs.query({active: true, currentWindow: true}).then(tabs => {

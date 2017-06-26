@@ -87,5 +87,5 @@ while True:
         sys.exit(0)
     # TODO USER: You might have different preferences regarding an editor
     elif r['cmd'] == 'openeditor':
-        subprocess.Popen(["x-terminal-emulator", "-e", "sensible-editor", r['path']])
+        subprocess.Popen(["x-terminal-emulator", "-e", "sensible-editor", r['path'][7:]])
     queue.task_done()

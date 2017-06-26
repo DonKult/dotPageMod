@@ -98,3 +98,26 @@ const handleListResult = r => db => {
 		req.onerror = e => reject(e);
 	});
 };
+// tell the user if we couldn't connect to the native app
+const noNativeConnection = () => browser.tabs.create({'active': true, 'url': '/pages/nonative.html'});
+const clearErrorPage = () => {
+	port.onDisconnect.removeListener(noNativeConnection);
+	port.onMessage.removeListener(clearErrorPage);
+};
+const nativeAppListener = r => {
+	let ret;
+	if (r.cmd === 'catresult') {
+		ret = db.then(handleCatResult(r), errorlog);
+	} else if (r.cmd === 'listresult') {
+		ret = db.then(handleListResult(r), errorlog);
+	} else if (r.cmd === 'doneresult') {
+		ret = applyToOpenTabs();
+	}
+};
+const startNativeApp = () => {
+	let port = browser.runtime.connectNative('dotpagemod_app');
+	port.onDisconnect.addListener(noNativeConnection);
+	port.onMessage.addListener(clearErrorPage);
+	port.onMessage.addListener(nativeAppListener);
+	return port;
+};
