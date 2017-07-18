@@ -60,9 +60,13 @@ while True:
             'results': results,
         }))
         if not inotify:
-            inotify_process = subprocess.Popen(['inotifywait', '-qrme', 'create,move,modify,delete',
-                '--exclude', '^.*(\.sw[opx]|~|[0-9]+)$',  # ignore vim swap files, backups and inodes
-                inotify_path], stdout=subprocess.PIPE)
+            # we get all symlink dirs as inotifywait doesn't watch them by default
+            dirs = subprocess.check_output(['find', '-L', inotify_path, '-xtype', 'l', '-type', 'd', '-print0']).split('\0')[:-1]
+            cmd = ['inotifywait', '-qrme', 'create,move,modify,delete',
+                   '--exclude', '^.*(\.sw[opx]|~|[0-9]+)$',  # ignore vim swap files, backups and inodes
+                   inotify_path]
+            cmd.extend(dirs)
+            inotify_process = subprocess.Popen(cmd, stdout=subprocess.PIPE)
             inotify = AsynchronousInotifyReader(inotify_process.stdout, queue)
     elif r['cmd'] == 'cat':
         filename = os.path.join(r['path'], r['collection'], r['hostname'], r['filename'])
