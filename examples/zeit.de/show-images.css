@@ -1,0 +1,3 @@
+figure.article__media.variant--wide::before {
+	display: none !important;
+}
