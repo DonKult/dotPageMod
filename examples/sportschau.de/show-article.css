@@ -1,0 +1,6 @@
+/* The layout is completely dependent on JavaScript… but without it we can at least show the content largly unstyled */
+.hidden {
+	width: unset !important;
+	height: unset !important;
+	position: unset !important;
+}

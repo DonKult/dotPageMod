@@ -1,0 +1,5 @@
+/* The page expects that some javascript is run to show the page after it has finished loading … */
+.se-pre-con
+{
+	display: none;
+}

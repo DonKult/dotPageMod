@@ -1,0 +1,6 @@
+.expando {
+	display: unset !important;
+}
+.expando iframe {
+	display: none;
+}
