@@ -209,6 +209,22 @@ After that you should be able to build the extension itself, which will need
 `make` will produce a `dotpagemod.xpi` file for you then, which you can install as
 an extension, e.g. via `about:addons` → `Install Add-on from File…`.
 
+Now that you have the extension installed you will need to configure it.
+Clicking on the new button and in the opening panel on the addon name in the
+included title bar brings you the fastest to the option panel, but you can also
+go the usual way as for any other extensions of course.
+
+The options want you to specify a directory containing your scripts and
+stylesheets. Where you want to store them is up to you and depends a bit on how
+much you want to share the collections (across profiles, users, computers, …),
+but you can change the path anytime you like so don't worry too much now and
+just pick a place. In this directory copy/link the examples/ directory in (not
+the content, the entire directory). After you have set and saved the option you
+should be able to visit a website modified by the examples and see the extension
+working. If not something is probably wrong with the app: See `burger menu` →
+`Developer` → `Browser console`. From there you can either keep the examples
+(or not), modify them and start your own collections. Have fun fixing the web!
+
 ## Contributing aka Where are all the testcases?
 
 Looking at the source it doesn't take long to figure out that the addon code
