@@ -120,10 +120,11 @@ of the website.
 	browser.runtime.sendMessage('tab/unpin');
 	browser.runtime.sendMessage('tab/mute');
 	browser.runtime.sendMessage('tab/unmute');
-	browser.runtime.sendMessage({ cmd: 'tab/url', url: 'https://example.org'});
 	browser.runtime.sendMessage('tab/close');
 	browser.runtime.sendMessage('tab/reload');
 	browser.runtime.sendMessage('tab/force-reload');
+	window.location = 'https://example.org';
+	browser.runtime.sendMessage({ cmd: 'tab/url', url: 'https://example.org'});
 
 ### open a new tab
 
@@ -200,7 +201,7 @@ isn't signed.
 
 If that wasn't discouraging enough for you git clone the repository onto your disk.
 You will want to choose a permanent location for simplicity as you are about to
-create a softlinks to the native application configuration file (at least that
+create a softlink to the native application configuration file (at least that
 is what you need to do on Linux, see [Native messaging documentation](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging#App_manifest_location)
 for details). `make install` tries to do the right thing for your current user.
 
@@ -244,7 +245,7 @@ free to implement an example for its use as well and fling it my way.
 
 Back in early 2016 the best way to create a Firefox extension was to use the
 Add-on SDK. In the SDK an API called [page-mod](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
-was used to modify packages by inserting JS and CSS files. The SDK is no more
+was used to modify webpages by inserting JS and CSS files. The SDK is no more
 and the API used by WebExtensions is entirely different, but the name stayed as
 the underlying idea remains true: Having a firefox extension which reads
 dotfiles and modifies pages with it.
@@ -275,7 +276,7 @@ Not very creative, I know, but it seemed better than using a gear or wrench…
 
 ## License
 
-Appart from the logo, which is (also) licensed under the [Creative Commons
+Apart from the logo, which is (also) licensed under the [Creative Commons
 Attribution 3.0](https://creativecommons.org/licenses/by/3.0/) as mentioned in
 the previous paragraph, the extension is MIT (Expat) licensed.
 
