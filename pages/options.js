@@ -12,4 +12,8 @@ const restoreOptions = () => browser.storage.local.get("configdir").then(setCurr
 
 document.addEventListener("DOMContentLoaded", restoreOptions);
 document.querySelector("form").addEventListener("submit", saveOptions);
+document.getElementById('cleardb').addEventListener('click', () => {
+	browser.runtime.sendMessage({'cmd': 'clear-database'});
+	console.log("click", "databaseclear");
+});
 })();

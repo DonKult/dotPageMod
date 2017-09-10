@@ -24,3 +24,9 @@ const makePageModFile = (_collection, _hostname, _filename, _type, _lastmod, _co
 		"content": _content
 	};
 };
+
+const handleDatabaseClearing = db => {
+	let req = db.transaction(['files'], 'readwrite').objectStore('files').clear();
+	req.onsuccess = console.info("DB of dotPageMod was cleared successfully");
+	req.onerror = errorlog;
+};

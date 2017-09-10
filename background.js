@@ -67,7 +67,9 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 		port.disconnect();
 		port = startNativeApp();
 		ret = port.postMessage({cmd: 'list', path: DOTPAGEMOD_PATH});
-	} else
+	} else if (n.cmd === 'clear-database')
+		db.then(handleDatabaseClearing);
+	else
 		return;
 	if (ret === undefined)
 		sendResponse();

@@ -42,6 +42,8 @@ label {
 				<label for="configdir">Config directory:<input type="text" id="configdir" placeholder="/path/to/.dotfiles/dotPageMod" required="required" /></label>
 				<button type="submit">Save</button>
 			</form>
+			<p>In case of problems with the database or if you want to remove the extension cleanly, you can clear the IndexedDB database used to store the files inserted into webpages – as such no data is stored there which couldn't be recovered by loading the configuration again. The database just acts as a cache, so don't be afraid of loosing data in case you (accidently) click the button: you don't. You should be reloading the configuration via the panel button through to store functionality of the addon.</p>
+			<button id="cleardb">Clear IndexedDB</button>
 		</main>
 		<script src="options.js"></script>
 	</body>
