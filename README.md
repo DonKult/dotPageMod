@@ -1,18 +1,13 @@
 # ![Logo of dotPageMod](./icon.png) dotPageMod
 
-Firefox extension for user configuration powered
-[PageMods](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
-to load local CSS and JavaScript into webpages.
+Firefox [WebExtension](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions)
+to load local CSS and JavaScript from your dotfiles into webpages.
 
 ## Features
 
-* each hostname has its own directory in a [config
-  directory](resource://dotpagemod-config/) residing in the firefox profile of
-  each user
+* each hostname has its own directory in your config directory of your own choosing
 * the hostname directories itself can be stored in independent packs for easier
   sharing and syncing (e.g. private, public, work, home, …)
-* additional resources (images, fonts, …) in this directory are accessible as
-  usual from CSS – no need for data: or online sources
 * port specific hosts with `hostname_port`
 * hostnames like `mozilla.org` match `developer.mozilla.org`
 * in fact: `org` matches all hosts in that top-level domain, too
@@ -31,7 +26,8 @@ to load local CSS and JavaScript into webpages.
 * on Linux with inotifywait (packaged in Debian in _inotify-tools_) the addon
   will reload automatically on relevant changes in the config directory
 * a badge on the toolbar button indicates how many files modify the current tab.
-  A list of these files can be accessed in the panel.
+  A list of these files can be accessed in the panel. A red badge & filename
+  indicates a file couldn't be applied, e.g. due to a programming error in it.
 
 ## (Better?) Alternatives
 
@@ -82,17 +78,34 @@ me (hopefully), but potentially for anyone (else) wanting to use it…
 	if (window.location.pathname === '/Style/')
 	if (window.location.pathname.startsWith('/Style/'))
 
-### [undo JavaScript changes](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/page-mod#Cleaning_up_on_add-on_removal)
+### undo changes
 
-	self.port.on("detach", () => {});
+	browser.runtime.onMessage.addListener(l => {
+		if (l.cmd !== 'detach') return;
+		// TODO: react here
+	});
 
 *Note*: The example nano-framework has some wrappers and examples to undo common
 changes like event handlers, style toggles and removal of added elements.
 
+*Note*: If a CSS file is changed and config reloaded the old CSS will be
+cleanly removed from open tabs and the new one applied. The situation is more
+complicated for JS: Individual files can't be unapplied (obviously), so in
+this case the tab gets the detach message described above and all JS files effecting
+this tab are reapplied. If the scripts effecting this tab have no clean detach
+behaviour you might be better off reloading the page to get a fresh start.
+
+*Beware*: This doesn't work on addon update/removal as there is no API for it.
+The closest might be [onSuspend](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/runtime/onSuspend)
+but it is neither implemented in Firefox nor a good drop-in as it can still be cancelled
+and comes with no runtime guarantees whatsoever. I really hope browser vendors will make
+up their mind on this as this doesn't feel like a good user experience. On the upside,
+you hopefully don't need to update the extension itself all too often – and of course
+never need to remove it. ;)
+
 ### showing desktop notifications
 
-	self.port.emit("dotpagemod/notify", title, body, icon, data);
-	self.port.on("dotpagemod/notify-clicked", data => {});
+	browser.runtime.sendMessage({'cmd': 'notify', 'title': title, 'message': msg});
 
 *Note*: A [notification via
 WebAPI](https://developer.mozilla.org/en-US/docs/Web/API/notification) requires
@@ -100,34 +113,45 @@ the website to have permission for it, but our scripts are written by the user,
 so permission is implicitly given – and independent from the permission status
 of the website.
 
-### running a hostscript
+### modifying current tab (pin, active, mute, reload, close, …)
 
-	self.port.emit("dotpagemod/run", 'script.run@1', [ '-q', window.location ] );
-	self.port.on("dotpagemod/run/script.run@1/stdout", data => {});
-	self.port.on("dotpagemod/run/script.run@1/stderr", data => {});
-	self.port.on("dotpagemod/run/script.run@1/close", (code, signal) => {});
-	self.port.on("dotpagemod/run/script.run@1/error", (code) => {});
-	self.port.emit("dotpagemod/run/script.run@1/stdin/data", '');
-	self.port.emit("dotpagemod/run/script.run@1/stdin/end");
+	browser.runtime.sendMessage('tab/activate');
+	browser.runtime.sendMessage('tab/pin');
+	browser.runtime.sendMessage('tab/unpin');
+	browser.runtime.sendMessage('tab/mute');
+	browser.runtime.sendMessage('tab/unmute');
+	browser.runtime.sendMessage('tab/close');
+	browser.runtime.sendMessage('tab/reload');
+	browser.runtime.sendMessage('tab/force-reload');
+	window.location = 'https://example.org';
+	browser.runtime.sendMessage({ cmd: 'tab/url', url: 'https://example.org'});
 
-*Note*: A hostscript provides you with enormous power – be very careful!
-While spawning multiple instances of the same script is possible, this just
-skyrockets the complexity of your content scripts, so at that point in time
-you should seriously consider writing a standalone extension… – in fact,
-you should consider it before writing the first line using this.
-
-### bring tab to foreground of the window
-
-	self.port.emit('dotpagemod/tab/activate');
-
-### [open a new tab](https://developer.mozilla.org/en-US/Add-ons/SDK/High-Level_APIs/tabs#open%28options%29)
+### open a new tab
 
 	window.open(url, '_blank');
-	self.port.emit('dotpagemod/tab/open', url, { isPrivate, inNewWindow, inBackground, isPinned });
+	browser.runtime.sendMessage({ cmd: 'tab/open', active: true, pinned: false, window: 'tab', url: 'https://example.org' });
 
-*Note*: The first option requires the website to have popup permissions, while
-the second can have a 'confusing' new-window behavior for private tabs.
-Experiment to figure out what works best for you.
+*Note*: The first option requires the website to have popup permissions.
+The second is less simple, but can open tabs in the 'current' window or in the
+window the tab belongs to the script runs in (default).
+
+### embedding images and co in CSS
+
+#### SVG
+
+URL encoding is enough here and has the benefit of allowing modifications still,
+the encoded string can be used as `url(data:image/svg+xml,ENCODED)`.
+
+	perl -MURI::Escape -e 'print uri_escape($ARGV[0]);' "to encode"
+	echo 'to decode' | awk -niord '{printf RT?$0chr("0x"substr(RT,2)):$0}' RS=%..
+
+(Source for [encode](https://stackoverflow.com/questions/296536/how-to-urlencode-data-for-curl-command/298258#298258)
+and [decode](https://unix.stackexchange.com/questions/159253/decoding-url-encoding-percent-encoding/159373#159373) commands)
+
+#### binary image formats and other things
+
+The URI needs to be `url(data:image/TYPE;base64,ENCODED)`.
+Encoding can be done with `base64 -w 0 < image.file`.
 
 ## Examples
 
@@ -175,9 +199,32 @@ addon into the review queue as it would just waste valuable reviewer time.
 That also means you have to run a Developer/Nightly edition of Firefox as it
 isn't signed.
 
-If that wasn't discouraging enough you have to install
-[jpm](https://developer.mozilla.org/en-US/Add-ons/SDK/Tools/jpm) and
-[Pandoc](http://pandoc.org/) after which `make` will produce an xpi for you.
+If that wasn't discouraging enough for you git clone the repository onto your disk.
+You will want to choose a permanent location for simplicity as you are about to
+create a softlink to the native application configuration file (at least that
+is what you need to do on Linux, see [Native messaging documentation](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging#App_manifest_location)
+for details). `make install` tries to do the right thing for your current user.
+
+After that you should be able to build the extension itself, which will need
+[Pandoc](http://pandoc.org/) and [zip](http://www.info-zip.org/Zip.html) installed.
+`make` will produce a `dotpagemod.xpi` file for you then, which you can install as
+an extension, e.g. via `about:addons` → `Install Add-on from File…`.
+
+Now that you have the extension installed you will need to configure it.
+Clicking on the new button and in the opening panel on the addon name in the
+included title bar brings you the fastest to the option panel, but you can also
+go the usual way as for any other extensions of course.
+
+The options want you to specify a directory containing your scripts and
+stylesheets. Where you want to store them is up to you and depends a bit on how
+much you want to share the collections (across profiles, users, computers, …),
+but you can change the path anytime you like so don't worry too much now and
+just pick a place. In this directory copy/link the examples/ directory in (not
+the content, the entire directory). After you have set and saved the option you
+should be able to visit a website modified by the examples and see the extension
+working. If not something is probably wrong with the app: See `burger menu` →
+`Developer` → `Browser console`. From there you can either keep the examples
+(or not), modify them and start your own collections. Have fun fixing the web!
 
 ## Contributing aka Where are all the testcases?
 
@@ -193,6 +240,24 @@ alike that this addon is sufficiently small to not need automatic tests…
 You can treat the examples folder as well as your personal collection as a
 testcase – it is what I do. So, if you happen to want to provide a patch, feel
 free to implement an example for its use as well and fling it my way.
+
+## What is in the name?
+
+Back in early 2016 the best way to create a Firefox extension was to use the
+Add-on SDK. In the SDK an API called [page-mod](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/SDK/High-Level_APIs/page-mod)
+was used to modify webpages by inserting JS and CSS files. The SDK is no more
+and the API used by WebExtensions is entirely different, but the name stayed as
+the underlying idea remains true: Having a firefox extension which reads
+dotfiles and modifies pages with it.
+
+## Why isn't it working on about: pages or addons.mozilla.org?
+
+The reason is security. WebExtensions aren't allowed to insert code into
+privileged tabs like about: pages and a few other domains to avoid people
+being tricked by evil extensions and co. The older extension types didn't
+have such restrictions, so even my examples include files modifying
+_addons.mozilla.org_ which doesn't work at the moment. Perhaps one day
+there is a way to get them working again.
 
 ## Logo
 
@@ -211,11 +276,11 @@ Not very creative, I know, but it seemed better than using a gear or wrench…
 
 ## License
 
-Appart from the logo, which is (also) licensed under the [Creative Commons
+Apart from the logo, which is (also) licensed under the [Creative Commons
 Attribution 3.0](https://creativecommons.org/licenses/by/3.0/) as mentioned in
 the previous paragraph, the extension is MIT (Expat) licensed.
 
-	Copyright © 2016 David Kalnischkies <david@kalnischkies.de>
+	Copyright © 2016-2017 David Kalnischkies <david@kalnischkies.de>
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy of
 	this software and associated documentation files (the "Software"), to deal in

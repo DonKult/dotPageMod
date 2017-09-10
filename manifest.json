@@ -1,0 +1,50 @@
+{
+  "manifest_version": 2,
+  "name": "dotPageMod",
+  "version": "0.0.2",
+  "description": "load local CSS and JavaScript from your dotfiles into webpages",
+  "developer": {
+    "name": "David Kalnischkies",
+    "url": "https://david.kalnischkies.de/"
+  },
+  "icons": {
+    "96": "icon.png"
+  },
+  "applications": {
+    "gecko": {
+      "id": "dotPageMod@kalnischkies.de",
+      "strict_min_version": "50.0",
+      "update_url": "https://localhost:2903/does-not-exist/updates.json"
+    }
+  },
+  "permissions": [
+    "<all_urls>",
+    "tabs",
+    "storage",
+    "webNavigation",
+    "nativeMessaging",
+    "notifications"
+  ],
+  "background": {
+    "scripts": [
+      "config.js",
+      "background/app.js",
+      "background/database.js",
+      "background/panel-info.js",
+      "background/pagemods.js",
+      "background.js"
+    ]
+  },
+  "browser_action": {
+    "browser_style": true,
+    "default_title": "dotPageMod",
+    "default_popup": "pages/panel.html",
+    "default_icon": {
+      "96": "icon.png"
+    }
+  },
+  "options_ui": {
+    "browser_style": true,
+    "page": "pages/options.html"
+  }
+}

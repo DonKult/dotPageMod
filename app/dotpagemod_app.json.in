@@ -1,0 +1,7 @@
+{
+  "name": "dotpagemod_app",
+  "description": "Native application supporting dotPageMod in loading files from disk",
+  "path": "@@ADDON_PATH@@/app/dotpagemod_app.py",
+  "type": "stdio",
+  "allowed_extensions": [ "dotPageMod@kalnischkies.de" ]
+}

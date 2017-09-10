@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>dotPageMod: Options</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link id="favicon" rel="icon" type="image/png" href="/icon.png" />
+		<style>
+html {
+	background-color: #fbfbfb;
+	color: #424e5a;
+	text-align: center;
+}
+input {
+	margin-left: 2em;
+	width: 20em;
+}
+button {
+	border: 0;
+	margin-top: 2em;
+	padding: 0 1.5em;
+	min-height: 30px;
+	color: white;
+	background-color: #0a84ff;
+}
+button:hover {
+	background-color: #0060df;
+}
+button:active {
+	background-color: #003eaa;
+}
+label {
+	display: block;
+}
+		</style>
+	</head>
+	<body>
+		<main>
+			<h1>Options for dotPageMod</h1>
+			<form>
+				<label for="configdir">Config directory:<input type="text" id="configdir" placeholder="/path/to/.dotfiles/dotPageMod" required="required" /></label>
+				<button type="submit">Save</button>
+			</form>
+		</main>
+		<script src="options.js"></script>
+	</body>
+</html>
+

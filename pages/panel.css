@@ -1,9 +1,17 @@
+body {
+	min-width: 300px;
+	min-height: 150px;
+}
 h1 {
 	text-align: center;
 	background-color: rgb(68, 68, 68);
 	color: rgb(187, 187, 187);
 	font-size: 0.7em;
 	padding: 0.2em 0px;
+	cursor: pointer;
+}
+#filelisting {
+	margin: 1em;
 }
 ul {
 	padding-left: 1em;
@@ -11,12 +19,18 @@ ul {
 a {
 	text-decoration: none;
 }
+a.failed {
+	color: red;
+}
 a:hover {
 	text-decoration: underline;
 }
 
-#menu {
+nav {
 	text-align: center;
+	justify-content: center;
+	display: flex;
+	flex-wrap: nowrap;
 }
 #browse-config {
 	color: green;
@@ -31,8 +45,13 @@ a:hover {
 /* adapted from http://www.w3schools.com/css/css_tooltip.asp */
 button {
 	position: relative;
-	display: inline-block;
+	text-align:center;
 	width: 50px;
+	cursor: pointer;
+	padding: 0;
+}
+button:disabled {
+	cursor: inherit;
 }
 button .tooltip {
 	visibility: hidden;
