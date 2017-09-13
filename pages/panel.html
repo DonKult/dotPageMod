@@ -11,11 +11,11 @@
 	<body>
 		<h1>dotPageMod</h1>
 		<nav>
-			<button id="browse-config" disabled="true" data-emit-action="openeditor">⚒<span class="tooltip">Browse Configuration</span></button>
-			<button id="reload-config" disabled="true" data-emit-action="reloadfiles">♻<span class="tooltip">Reload Configuration</span></button>
-			<button id="restart-app" disabled="true" data-emit-action="restartapp">☠<span class="tooltip">Restart App</span></button>
-			<button id="call-helpline" disabled="true" data-emit-action="openurl" data-emit-param="/README.html">✆<span class="tooltip">Show README</span></button>
-			<button id="show-examples" disabled="true" data-emit-action="openurl" data-emit-param="https://github.com/DonKult/dotPageMod/tree/master/examples">⌘<span class="tooltip">View examples online</span></button>
+			<button id="browse-config" disabled="true" data-emit-action="openeditor">⚒<span class="tooltip i18n">__MSG_panelBrowseConfig__</span></button>
+			<button id="reload-config" disabled="true" data-emit-action="reloadfiles">♻<span class="tooltip i18n">__MSG_panelReloadConfig__</span></button>
+			<button id="restart-app" disabled="true" data-emit-action="restartapp">☠<span class="tooltip i18n">__MSG_panelRestartApp__</span></button>
+			<button id="call-helpline" disabled="true" data-emit-action="openurl" data-emit-param="/README.html">✆<span class="tooltip i18n">__MSG_panelShowReadme__</span></button>
+			<button id="show-examples" disabled="true" data-emit-action="openurl" data-emit-param="https://github.com/DonKult/dotPageMod/tree/master/examples">⌘<span class="tooltip i18n">__MSG_panelViewExamples__</span></button>
 		</nav>
 		<ul id="filelisting">
 			<li>example
@@ -29,6 +29,7 @@
 				</ul>
 			</li>
 		</ul>
+		<script src="i18n.js"></script>
 		<script src="panel.js"></script>
 	</body>
 </html>

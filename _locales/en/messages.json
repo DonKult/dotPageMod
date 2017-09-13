@@ -1,0 +1,70 @@
+{
+	"extensionDescription": {
+		"message": "load local CSS and JavaScript from your dotfiles into webpages",
+		"description": "Description of the extension."
+	},
+	"panelBrowseConfig": {
+		"message": "Browse Configuration",
+		"description": "Tooltip for a button in the panel"
+	},
+	"panelReloadConfig": {
+		"message": "Reload Configuration",
+		"description": "Tooltip for a button in the panel"
+	},
+	"panelRestartApp": {
+		"message": "Restart App",
+		"description": "Tooltip for a button in the panel"
+	},
+	"panelShowReadme": {
+		"message": "Show README",
+		"description": "Tooltip for a button in the panel"
+	},
+	"panelViewExamples": {
+		"message": "View examples online",
+		"description": "Tooltip for a button in the panel"
+	},
+	"panelNoDotfilesApply": {
+		"message": "No dotfiles for to this page.",
+		"description": "Message shown in the panel if no files apply to the current page"
+	},
+	"optionTitle": {
+		"message": "Options for dotPageMod",
+		"description": "Title for the options page"
+	},
+	"optionConfigDir": {
+		"message": "Config directory",
+		"description": "Label for the input field specifying the configuration directory"
+	},
+	"optionConfigSave": {
+		"message": "Save",
+		"description": "Button text to save the configuration directory chosen"
+	},
+	"optionClearDBDesc": {
+		"message": "In case of problems with the database or if you want to remove the extension cleanly, you can clear the IndexedDB database used to store the files inserted into webpages – as such no data is stored there which couldn't be recovered by loading the configuration again. The database just acts as a cache, so don't be afraid of loosing data in case you (accidently) click the button: you don't. You should be reloading the configuration via the panel button through to store functionality of the addon.",
+		"description": "Paragraph explaining the option of clearing the database"
+	},
+	"optionClearDBButton": {
+		"message": "Clear IndexedDB",
+		"description": "Button text to clear the database"
+	},
+	"noNativeTitle": {
+		"message": "Problem loading native app",
+		"description": "Title of the page explaining a problem with the native application"
+	},
+	"noNativeNeedApp": {
+		"message": "The dotPageMod extension can't be used without installing the native companion application first as the extension needs access to local files and extensions typically can't do this.",
+		"description": "Explain the need for the installation of the native companion application"
+	},
+	"noNativeSeeReadme": {
+		"message": "The $README$ details how to build and install the extension and its application.",
+		"description": "Point to the README for details on how to install",
+		"placeholders": {
+			"readme": {
+				"content": "<a href=\"/README.html\">README</a>"
+			}
+		}
+	},
+	"noNativeTryIt": {
+		"message": "Try it, it is easy!"
+	}
+}

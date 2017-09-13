@@ -2,7 +2,8 @@
   "manifest_version": 2,
   "name": "dotPageMod",
   "version": "0.0.2",
-  "description": "load local CSS and JavaScript from your dotfiles into webpages",
+  "default_locale": "en",
+  "description": "__MSG_extensionDescription__",
   "developer": {
     "name": "David Kalnischkies",
     "url": "https://david.kalnischkies.de/"

@@ -88,7 +88,7 @@ const updateFileListing = m => {
 	if (filelisting.hasChildNodes())
 		return;
 	const li = document.createElement('li');
-	li.textContent = 'No dotfiles for to this page.';
+	li.textContent = browser.i18n.getMessage('panelNoDotfilesApply');
 	filelisting.appendChild(li);
 };
 
