@@ -3,7 +3,7 @@
 #
 # VERSION       :0.1.0
 # BUILD         :docker build -t donkult/dotpagemod .
-# RUN           :docker run --rm -it -v /root:/mnt donkult/dotpagemod
+# RUN           :docker run --rm -it -v /mnt:/mnt donkult/dotpagemod
 # RESULT        :/mnt/dotPageMod/dotpagemod.xpi
 
 FROM debian:stretch
