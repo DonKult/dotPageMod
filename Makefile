@@ -1,10 +1,13 @@
 ADDON_PATH = $(shell readlink -f .)
 
-all xpi: README.html app/dotpagemod_app.json
+all xpi: manifest.json README.html app/dotpagemod_app.json
 	zip --must-match -r dotpagemod.xpi _locales background pages background.js config.js icon.png manifest.json README.html
 
 README.html: README.md
 	./prepare-release README
+
+manifest.json: manifest.json.in .git
+	sed -e 's#@@VERSION@@#$(shell git describe)#' < $< > $@
 
 app/dotpagemod_app.json: app/dotpagemod_app.json.in
 	./prepare-release app.json

@@ -1,4 +1,5 @@
 app/dotpagemod_app.json
+manifest.json
 README.html
 *.xpi
 *.pyc
