@@ -199,16 +199,35 @@ addon into the review queue as it would just waste valuable reviewer time.
 That also means you have to run a Developer/Nightly edition of Firefox as it
 isn't signed.
 
-If that wasn't discouraging enough for you git clone the repository onto your disk.
-You will want to choose a permanent location for simplicity as you are about to
+If the intro wasn't discouraging enough for you want to first choose a permanent
+location on your disk to store this repository in for simplicity as you are about to
 create a softlink to the native application configuration file (at least that
 is what you need to do on Linux, see [Native messaging documentation](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_messaging#App_manifest_location)
 for details). `make install` tries to do the right thing for your current user.
 
-After that you should be able to build the extension itself, which will need
-[Pandoc](http://pandoc.org/) and [zip](http://www.info-zip.org/Zip.html) installed.
-`make` will produce a `dotpagemod.xpi` file for you then, which you can install as
-an extension, e.g. via `about:addons` → `Install Add-on from File…`.
+With the native app done, you need to install the webextension itself. You can either
+choose to use one of the releases published on Github or built it yourself from source;
+that isn't hard, don't worry! You even have two options:
+
+### Building with Docker
+
+You can use [Docker](https://www.docker.com/) (packaged as `docker.io` in Debian)
+to build the add-on if you so choose. The included [Dockerfile](https://github.com/DonKult/dotPageMod/blob/master/Dockerfile)
+has the details if you are unsure how to do it. If you follow it by the letter you
+will end up with a checkout of the git repository in `/mnt/dotPageMod` as your
+permanent location which will including a built `dotpagemod.xpi`.
+
+### Building manually
+
+Apart from a typical Linux system you already have, you will likely need to install
+[Pandoc](http://pandoc.org/) and [zip](http://www.info-zip.org/Zip.html).
+Checkout the repository to the permanent location you have chosen, then it is
+as simple as running `make` which will produce a `dotpagemod.xpi` file for you.
+
+### Configuring the extension
+
+After acquiring an xpi file including the webextension you can install
+it e.g. via `about:addons` → `Install Add-on from File…`.
 
 Now that you have the extension installed you will need to configure it.
 Clicking on the new button and in the opening panel on the addon name in the

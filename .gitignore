@@ -3,3 +3,4 @@ manifest.json
 README.html
 *.xpi
 *.pyc
+.fuse_*
