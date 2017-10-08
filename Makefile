@@ -7,7 +7,7 @@ README.html: README.md
 	./prepare-release README
 
 manifest.json: manifest.json.in .git
-	sed -e 's#@@VERSION@@#$(shell git describe)#' < $< > $@
+	sed -e 's#@@VERSION@@#$(shell git describe | cut -c 2-)#' < $< > $@
 
 app/dotpagemod_app.json: app/dotpagemod_app.json.in
 	./prepare-release app.json
