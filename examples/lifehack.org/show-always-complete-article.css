@@ -1,0 +1,4 @@
+/* show the entire post even for small viewports */
+div.infinity-post-item {
+	max-height: unset !important;
+}
