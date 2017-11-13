@@ -29,6 +29,7 @@
   "background": {
     "scripts": [
       "config.js",
+      "background/utils.js",
       "background/app.js",
       "background/database.js",
       "background/panel-info.js",
