@@ -197,7 +197,9 @@ At the moment you have to build the extension yourself to install it. Given
 that I approximate the userbase to be only me, I have no plans to shuffle the
 addon into the review queue as it would just waste valuable reviewer time.
 That also means you have to run a Developer/Nightly edition of Firefox as it
-isn't signed.
+isn't signed and only those allow disabling the signature requirement with
+the `about:config` option `xpinstall.signatures.required` you have to set to
+`false` (see also [Mozillas FAQ on extension signing](https://wiki.mozilla.org/Addons/Extension_Signing#FAQ)).
 
 If the intro wasn't discouraging enough for you want to first choose a permanent
 location on your disk to store this repository in for simplicity as you are about to
