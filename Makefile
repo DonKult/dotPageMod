@@ -1,16 +1,21 @@
 ADDON_PATH = $(shell readlink -f .)
 
 all xpi: manifest.json README.html app/dotpagemod_app.json
-	zip --must-match -r dotpagemod.xpi _locales background pages background.js config.js icon.png manifest.json README.html LICENSE
+	zip -X --latest-time --must-match -r dotpagemod.xpi \
+		_locales background pages \
+		background.js config.js icon.png manifest.json README.html LICENSE
 
 README.html: README.md
 	./prepare-release README
+	touch -d '$(shell stat --format "%y" "$<")' $@
 
 manifest.json: manifest.json.in .git
 	sed -e 's#@@VERSION@@#$(shell git describe | cut -c 2-)#' < $< > $@
+	touch -d '$(shell stat --format "%y" "$<")' $@
 
 app/dotpagemod_app.json: app/dotpagemod_app.json.in
 	./prepare-release app.json
+	touch -d '$(shell stat --format "%y" "$<")' $@
 
 distclean clean:
 	rm -f README.html app/dotpagemod_app.json dotpagemod.xpi
