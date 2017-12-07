@@ -1,8 +1,0 @@
-.git/
-examples/
-.gitignore
-.jpmignore
-*.xpi
-prepare-release
-Makefile
-README.md
