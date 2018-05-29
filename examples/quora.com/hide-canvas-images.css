@@ -1,0 +1,3 @@
+/* has the feature of being able to zoom into images via canvas it seems…
+   I don't need that. So clean up the page for me please */
+canvas.ui_qtext_image_placeholder { display: none; }
