@@ -3,3 +3,6 @@
 forEach('a[href^="http://t.umblr.com/redirect"', a => {
 	a.href = decodeURIComponent(a.search.substr(1).split('&')[0].substr(2));
 });
+forEach('a[href^="https://t.umblr.com/redirect"', a => {
+	a.href = decodeURIComponent(a.search.substr(1).split('&')[0].substr(2));
+});
