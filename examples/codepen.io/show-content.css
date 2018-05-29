@@ -1,0 +1,9 @@
+html.no-js pre.code-box {
+	position: unset !important;
+	top: unset !important;
+	left: unset !important;
+	width: unset !important;
+	height: 100% !important;
+
+	font-size: 70%;
+}
