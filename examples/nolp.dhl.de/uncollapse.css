@@ -1,0 +1,6 @@
+.panel-collapse, .icon-collapse {
+	display: block !important;
+}
+.icon-expand {
+	display: none !important;
+}
