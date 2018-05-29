@@ -1,0 +1,6 @@
+gf-loading-indicator {
+	display: none;
+}
+gf-deferred-content.u-invisible {
+	visibility: unset !important;
+}
