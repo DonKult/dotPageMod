@@ -5,17 +5,31 @@ const getHostDirsFromURI = url => {
 	if (u[0] === 'http:' || u[0] === 'https:' || u[0] === 'ftp:') {
 		// this builds an array like [ ALL, com, example.com, foo.example.com ]
 		let preset;
-		if (u[0] === 'ftp:')
+		let preset_port;
+		if (u[0] === 'ftp:') {
 			preset = [ 'ALL_ftp' ];
-		else if (u[0] === 'https:')
+			preset_port = 21;
+		} else if (u[0] === 'https:') {
 			preset = [ 'ALL', 'ALL_https' ];
-		else
+			preset_port = 443;
+		} else {
 			preset = [ 'ALL', 'ALL_http' ];
-		Array.prototype.push.apply(pros, u[2].split('.').reverse().reduce((a,v,i) => {
+			preset_port = 80;
+		}
+		let hostname_port = u[2].split(':');
+		let hostname = hostname_port[0];
+		let port;
+		if (hostname_port.length === 1)
+			port = preset_port;
+		else
+			port = hostname_port[1];
+		Array.prototype.push.apply(pros, hostname.split('.').reverse().reduce((a,v,i) => {
 			if (i === 0)
-				a.push(v);
-			else
-				a.push([v,a[a.length - 1]].join('.'));
+				a.push(v, [v, port].join(':'));
+			else {
+				let toplevelhost = [v,a[a.length - 2]].join('.');
+				a.push(toplevelhost, [toplevelhost, port].join(':'));
+			}
 			return a;
 		}, preset));
 	} else if (u[0] === 'file:')
