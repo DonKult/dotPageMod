@@ -1,0 +1,3 @@
+#nav li:hover > ol {
+	display: block !important;
+}
