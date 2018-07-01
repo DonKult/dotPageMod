@@ -1,0 +1,7 @@
+span.md-spoiler-text:hover {
+	background: unset !important;
+	color: unset !important;
+}
+span.md-spoiler-text:hover > * {
+	opacity: unset !important;
+}
