@@ -3,7 +3,7 @@
 	obj.$ = selector => document.querySelector(selector);
 	obj.$$ = selector => document.querySelectorAll(selector);
 	obj.forIt = (selector, callback) => {
-		const node = document.querySelector(selector);
+		const node = typeof selector === 'string' ? document.querySelector(selector) : selector;
 		if (node !== null)
 			callback(node);
 	};
