@@ -66,5 +66,25 @@
 	},
 	"noNativeTryIt": {
 		"message": "Try it, it is easy!"
+	},
+	"noConfigTitle": {
+		"message": "No directory configured for dotPageMod",
+		"description": "Title of the page explaining missing configuration"
+	},
+	"noConfigNeedApp": {
+		"message": "The dotPageMod extension uses a special directory layout to load files to modify pages a companion application loads for the extension as web extensions can't access local files usually. Now would be a good time to setup such a directory and point dotPageMod to it.",
+		"description": "Explain the need for setting a configuration directory"
+	},
+	"noConfigSeeReadme": {
+		"message": "The $README$ details how the directory should look & look especially at the examples directory included in the source.",
+		"description": "Point to the README for details on how to write page modifications",
+		"placeholders": {
+			"readme": {
+				"content": "<a href=\"/README.html\">README</a>"
+			}
+		}
+	},
+	"noConfigTryIt": {
+		"message": "Open settings now!"
 	}
 }
