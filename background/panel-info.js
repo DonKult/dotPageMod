@@ -32,7 +32,7 @@ const updateTabInfo = (tabId, file, type) => {
 		browser.browserAction.setBadgeText({'text': '', 'tabId': tabId});
 	else
 		browser.browserAction.setBadgeText({'text': '' + i, 'tabId': tabId});
-	browser.browserAction.setBadgeBackgroundColor({'color': allgood ? 'black' : 'red', 'tabId': tabId});
+	browser.browserAction.setBadgeBackgroundColor({'color': allgood ? '#666666' : 'red', 'tabId': tabId});
 };
 const tabInfoQuery = filename => {
 	let ret = [];
