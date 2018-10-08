@@ -4,3 +4,4 @@
    code in a common file for now */
 forEach('img[data-src]', i => i.src = i.getAttribute('data-src'));
 forEach('img[data-lazy]', i => i.src = i.getAttribute('data-lazy'));
+forEach('img[data-original]', i => i.src = i.getAttribute('data-original'));
