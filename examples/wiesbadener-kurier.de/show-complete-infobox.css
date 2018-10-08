@@ -1,0 +1,6 @@
+.vrm-infobox__content::after {
+	height: unset;
+}
+.vrm-infobox__content {
+	max-height: unset;
+}
