@@ -1,0 +1,10 @@
+span.spoiler:hover { color: unset !important; }
+span.spoiler a[href]
+{
+	opacity: 0;
+	pointer-events: auto !important;
+}
+span.spoiler:hover a[href]
+{
+	opacity: 1;
+}
