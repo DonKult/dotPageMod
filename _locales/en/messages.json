@@ -40,7 +40,7 @@
 		"description": "Button text to save the configuration directory chosen"
 	},
 	"optionClearDBDesc": {
-		"message": "In case of problems with the database or if you want to remove the extension cleanly, you can clear the IndexedDB database used to store the files inserted into webpages – as such no data is stored there which couldn't be recovered by loading the configuration again. The database just acts as a cache, so don't be afraid of losing data in case you (accidentally) click the button: you don't. You should be reloading the configuration via the panel button through to store functionality of the addon.",
+		"message": "In case of problems with the database or if you want to remove the extension cleanly, you can clear the IndexedDB database used to store the files inserted into webpages – as such no data is stored there which couldn't be recovered by loading the configuration again. The database just acts as a cache, so don't be afraid of losing data in case you (accidentally) click the button: you don't. You should be reloading the configuration via the panel button through to restore functionality of the addon.",
 		"description": "Paragraph explaining the option of clearing the database"
 	},
 	"optionClearDBButton": {

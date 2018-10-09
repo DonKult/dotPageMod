@@ -1,4 +1,4 @@
-/* sometimes a comic needs a little further explaination – Black Hat: "It's 'cause you're dumb." */
+/* sometimes a comic needs a little further explanation – Black Hat: "It's 'cause you're dumb." */
 forEach('ul.comicNav', ul => {
 	const parts = window.location.toString().split('/');
 	if (parts.length !== 5 || parseInt(parts[3]) === 0)

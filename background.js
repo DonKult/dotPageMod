@@ -35,20 +35,20 @@ browser.runtime.onMessage.addListener((n, sender, sendResponse) => {
 			else if (n.cmd === 'tab/close')
 				ret = browser.tabs.remove(sender.tab.id);
 			else if (n.cmd === 'tab/open') {
-				let creat = { 'url': n.url };
+				let create = { 'url': n.url };
 				if ('active' in n)
-					creat.active = n.active;
+					create.active = n.active;
 				if ('pinned' in n)
-					creat.pinned = n.pinned;
+					create.pinned = n.pinned;
 				if ('window' in n)
 					;
 				else
 					n.window = 'tab';
 				if (n.window === 'tab')
-					creat.windowId = sender.tab.windowId;
+					create.windowId = sender.tab.windowId;
 				else if (n.window !== 'current')
-					console.warn('Ignore unknown window option for new tab', n.window, creat);
-				ret = browser.tabs.create(creat);
+					console.warn('Ignore unknown window option for new tab', n.window, create);
+				ret = browser.tabs.create(create);
 			} else {
 				console.warn("got an unknown tab action from tab", sender.tab.id, n);
 				return;
