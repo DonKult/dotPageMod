@@ -1,15 +1,11 @@
 #!/bin/sh
 set -e
 
-escape_shell() {
-	echo "$@" | sed -e "s#'#'\"'\"'#g"
-}
-
 case "$1" in
 README)
 	TMPFILE="$(mktemp)"
 	test -n "$TMPFILE" || exit 1
-	trap "cd /; rm '$(escape_shell "$TMPFILE")';" 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
+	trap 'cd /; rm "${TMPFILE}";' 0 HUP INT QUIT ILL ABRT FPE SEGV PIPE TERM
 	cat <<EOF > "${TMPFILE}"
 <!DOCTYPE html>
 <html>
