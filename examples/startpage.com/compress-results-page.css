@@ -1,17 +1,28 @@
-/* compress the display of results */
-.links_beside_url
+/* content on next page is hidden by default… */
+[data-view="hidden-results"]
+{
+	visibility: unset;
+}
+/* filter list is by default expanded */
+ul.filter-option li
 {
 	display: none;
 }
-h3.clk, p.ads_desc_stuff_normal
+ul.filter-option li:first-child,
+ul.filter-option:hover li
 {
-	display: inline;
+	display: unset;
 }
-#results li > div.result
+/* have the main content be slightly wider */
+.column--main__content, .column--sidebar
 {
-	max-width: none !important;
+	max-width: unset;
 }
-div.result p.desc
+.column--main__content, .column--left
 {
-	max-width: 525px;
+	width: unset;
+}
+div.columns
+{
+	margin: auto;
 }
