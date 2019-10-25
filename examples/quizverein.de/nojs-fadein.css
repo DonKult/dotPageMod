@@ -1,0 +1,10 @@
+/* make fade in work without JS */
+[data-aos^="fade"]
+{
+	opacity: unset !important;
+}
+
+[data-aos="flip-up"]
+{
+	transform: unset !important;
+}

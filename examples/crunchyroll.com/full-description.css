@@ -1,0 +1,17 @@
+.description .trunc-desc, .description .more-dots {
+	display: none;
+}
+.description .more {
+	display: unset !important;
+}
+.description .more-dots + span a[onclick] {
+	display: none;
+}
+
+ul.list-of-seasons li.season ul.portrait-grid {
+	display: block !important;
+}
+
+div.bb-spoiler-body {
+	display: block !important;
+}

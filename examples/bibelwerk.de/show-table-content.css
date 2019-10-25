@@ -1,0 +1,2 @@
+/* JS is used to unhide the first few entries… lets just show them all */
+div.bJS_sundaylesson { display: flex !important; }
