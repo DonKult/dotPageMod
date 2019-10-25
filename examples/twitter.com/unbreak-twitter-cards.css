@@ -1,6 +1,0 @@
-/* Twitter cards need a lot of javascript… or so they want you to believe.
-   Not pretty, but at least working */
-.PlayerCard--clickToLoad
-{
-	display: block !important;
-}
