@@ -1,0 +1,4 @@
+html.no-js div.image-content, html.no-js .image-container img.image.js
+{
+	display: unset;
+}
