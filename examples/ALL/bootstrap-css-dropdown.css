@@ -1,13 +1,16 @@
 /* Bootstrap dropdown menus are everywhere and require JavaScript…
    Ignoring browser compatibility we can happily go CSS-only */
-li.dropdown > ul {
+li.dropdown > ul, .dropdown-toggle + .dropdown-menu {
 	display: block;
 	visibility: hidden;
 	opacity: 0;
 	transition: visibility 0s linear 0.3s, opacity 0.3s linear;
 }
-li.dropdown:hover > ul {
+li.dropdown:hover > ul, .dropdown-toggle:hover + .dropdown-menu, .dropdown-menu:hover {
 	visibility: visible;
 	opacity: 1;
 	transition-delay: 0s;
+}
+.accordion-content {
+	display: unset !important;
 }
