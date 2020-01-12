@@ -1,0 +1,4 @@
+/* awesome font is an external load we can make do without here */
+i.fa-arrow-right::before { content: "»"; }
+i.fa-arrow-left::before { content: "«"; }
+

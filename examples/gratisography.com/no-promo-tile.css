@@ -1,0 +1,8 @@
+/* shutterstock promo tile has no id */
+div.shutterstock-wrap,
+article.single-photo.hentry {
+	display: none;
+}
+article.single-photo.hentry[id] {
+	display: block;
+}

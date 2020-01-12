@@ -15,3 +15,7 @@ ul.list-of-seasons li.season ul.portrait-grid {
 div.bb-spoiler-body {
 	display: block !important;
 }
+
+img.lazyload {
+	opacity: unset;
+}

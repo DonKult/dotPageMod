@@ -1,0 +1,4 @@
+img.lazyload[data-srcset] {
+	-webkit-filter: unset !important;
+	filter: unset !important;
+}
