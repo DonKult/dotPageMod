@@ -1,7 +1,7 @@
 /* content on next page is hidden by default… */
-[data-view="hidden-results"]
+[data-view="hidden-results"], .show-results
 {
-	visibility: unset;
+	visibility: unset !important;
 }
 /* filter list is by default expanded */
 ul.filter-option li

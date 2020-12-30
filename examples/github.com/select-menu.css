@@ -9,3 +9,12 @@
 {
 	display: block;
 }
+
+div.js-wiki-sidebar-toggle-display
+{
+	display: block !important;
+}
+div.js-wiki-sidebar-toggle-display .filter-bar
+{
+	display: none;
+}
