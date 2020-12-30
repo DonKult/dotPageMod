@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import json
 import time
 import struct
@@ -7,26 +7,24 @@ import os
 import subprocess
 from glob import glob
 from AsynchronousFileReader import AsynchronousJSONReader, AsynchronousInotifyReader
-try:
-    # Python 2
-    from Queue import Queue
-except ImportError:
-    # Python 3
-    from queue import Queue
+from queue import Queue
 
 
 # Encode a message for transmission, given its content.
 def encodeMessage(messageContent):
-    encodedContent = json.dumps(messageContent)
-    encodedLength = struct.pack('@I', len(encodedContent))
-    return {'length': encodedLength, 'content': encodedContent}
+    encodedContent = json.dumps(messageContent).encode("utf-8")
+    encodedLength = struct.pack('=I', len(encodedContent))
+    return {
+        'length' : encodedLength,
+        'content' : struct.pack(str(len(encodedContent)) + "s", encodedContent)
+    }
 
 
 # Send an encoded message to stdout
 def sendMessage(encodedMessage):
-    sys.stdout.write(encodedMessage['length'])
-    sys.stdout.write(encodedMessage['content'])
-    sys.stdout.flush()
+    sys.stdout.buffer.write(encodedMessage['length'])
+    sys.stdout.buffer.write(encodedMessage['content'])
+    sys.stdout.buffer.flush()
 
 
 queue = Queue()
@@ -61,7 +59,7 @@ while True:
         }))
         if not inotify:
             # we get all symlink dirs as inotifywait doesn't watch them by default
-            dirs = subprocess.check_output(['find', '-L', inotify_path, '-xtype', 'l', '-type', 'd', '-print0']).split('\0')[:-1]
+            dirs = subprocess.check_output(['find', '-L', inotify_path, '-xtype', 'l', '-type', 'd', '-print0']).split(b'\0')[:-1]
             cmd = ['inotifywait', '-qrme', 'create,move,modify,delete',
                    '--exclude', '^.*(\.sw[opx]|~|[0-9]+)$',  # ignore vim swap files, backups and inodes
                    inotify_path]

@@ -7,7 +7,7 @@ native application called by a webextension.
 
 MIT License
 Copyright (c) 2014 Stefaan Lippens
-              2017 David Kalnischkies
+              2017-2020 David Kalnischkies
 """
 
 __version__ = '0.2.1.1'
@@ -16,12 +16,7 @@ import threading
 import json
 import struct
 import sys
-try:
-    # Python 2
-    from Queue import Queue
-except ImportError:
-    # Python 3
-    from queue import Queue
+from queue import Queue
 
 
 class AsynchronousFileReader(threading.Thread):
@@ -75,12 +70,12 @@ class AsynchronousJSONReader(AsynchronousFileReader):
         The body of the thread: read lines and put them on the queue.
         """
         while True:
-            rawLength = self._fd.read(4)
+            rawLength = self._fd.buffer.read(4)
             if len(rawLength) == 0:
                 self.queue.put({'cmd': 'exit'})
                 break
-            messageLength = struct.unpack('@I', rawLength)[0]
-            message = self._fd.read(messageLength)
+            messageLength = struct.unpack('=I', rawLength)[0]
+            message = self._fd.buffer.read(messageLength)
             self.queue.put(json.loads(message))
 
 
@@ -95,15 +90,15 @@ class AsynchronousInotifyReader(AsynchronousFileReader):
         The body of the thread: read lines and put them on the queue.
         """
         while True:
-            line = self._fd.readline().rstrip('\n')
+            line = self._fd.readline().rstrip(b'\n')
             if self.listcalled:
                 continue
             if not line:
                 self.queue.put({'cmd': 'exit'})
                 break
             # avoid working on uninteresting file changes
-            if not line.endswith('.js'):
-                if not line.endswith('.css'):
+            if not line.endswith(b'.js'):
+                if not line.endswith(b'.css'):
                     continue
             self.listcalled = True
             self.queue.put({'cmd': 'list', 'inotify': line})
