@@ -15,4 +15,6 @@ forEach('img.progressiveMedia-thumbnail', img => {
 			return;
 		img.src = decodeURIComponent(img.src.substr(start, end - start));
 	}
+	img.setAttribute('loading', 'lazy');
+	img.setAttribute('importance', 'low');
 });

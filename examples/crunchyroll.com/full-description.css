@@ -16,6 +16,6 @@ div.bb-spoiler-body {
 	display: block !important;
 }
 
-img.lazyload {
+.lazyload, .lazyloading {
 	opacity: unset;
 }

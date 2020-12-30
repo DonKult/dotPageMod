@@ -5,4 +5,6 @@ forIt('#content-image', img => {
 	img.src = real;
 	// could do with CSS instead
 	img.style.opacity = 1;
+	img.setAttribute('loading', 'lazy');
+	img.setAttribute('importance', 'low');
 });

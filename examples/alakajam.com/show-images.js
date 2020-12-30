@@ -3,4 +3,8 @@ forEach('div[data-src]', div => {
 	div.removeAttribute('data-src');
 	div.setAttribute("style", "background-image: url(\"" + src + "\");");
 });
-forEach('img[data-src]', i => i.src = i.dataset.src);
+forEach('img[data-src]', i => {
+	i.src = i.dataset.src;
+	i.setAttribute('loading', 'lazy');
+	i.setAttribute('importance', 'low');
+});
