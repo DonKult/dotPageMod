@@ -160,9 +160,9 @@ Encoding can be done with `base64 -w 0 < image.file`.
 ### URL to directory resolution
 
 * `http://dotpagemod.example.com:8080/` => `ALL`, `ALL_http`, `com`, `com_8080`, `example.com`, `example.com_8080`, `dotpagemod.example.com`, `dotpagemod.example.com_8080`
-* `http://dot.page.mod.example.com/` => `ALL`, `ALL_http`, `com`, `com_80`, `example.com`, `example.com_80`, `dotpagemod.example.com`, `dotpagemod.example.com_80`
-* `https://dot.page.mod.example.com/` => `ALL`, `ALL_https`, `com`, `com_443`, `example.com`, `example.com_443`, `dotpagemod.example.com`, `dotpagemod.example.com_443`
-* `ftp://dot.page.mod.example.com/` => `ALL_ftp`, `com`, `com_21`, `example.com`, `example.com_21`,  `dotpagemod.example.com`, `dotpagemod.example.com_21`
+* `http://dotpagemod.example.com/` => `ALL`, `ALL_http`, `com`, `com_80`, `example.com`, `example.com_80`, `dotpagemod.example.com`, `dotpagemod.example.com_80`
+* `https://dotpagemod.example.com/` => `ALL`, `ALL_https`, `com`, `com_443`, `example.com`, `example.com_443`, `dotpagemod.example.com`, `dotpagemod.example.com_443`
+* `ftp://dotpagemod.example.com/` => `ALL_ftp`, `com`, `com_21`, `example.com`, `example.com_21`,  `dotpagemod.example.com`, `dotpagemod.example.com_21`
 
 ## Examples
 
