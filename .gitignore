@@ -4,3 +4,4 @@ README.html
 *.xpi
 *.pyc
 .fuse_*
+.gitdescribe
