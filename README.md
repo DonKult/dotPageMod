@@ -287,9 +287,15 @@ dotfiles and modifies pages with it.
 The reason is security. WebExtensions aren't allowed to insert code into
 privileged tabs like about: pages and a few other domains to avoid people
 being tricked by evil extensions and co. The older extension types didn't
-have such restrictions, so even my examples include files modifying
-_addons.mozilla.org_ which doesn't work at the moment. Perhaps one day
-there is a way to get them working again.
+have such restrictions. Perhaps one day there is a way to get them
+working again for all tabs if a user can manage the risk.
+
+At least for "restricted domains" in Firefox you can use the hidden
+`about:config` option `extensions.webextensions.restrictedDomains` to
+modify the set – including making it empty, so that e.g. the included
+example for `addons.mozilla.org` works again. This option does *NOT*
+affect `about:` pages or the PDF viewer through.
+
 
 ## Logo
 

@@ -1,5 +1,6 @@
 forEach('a', link => {
-	if (link.href.startsWith("https://outgoing.") === false)
+	if (link.href.startsWith("https://outgoing.") === false &&
+	    link.href.startsWith("https://prod.outgoing.") === false)
 		return;
 	const start_newurl = link.href.indexOf('/http');
 	if (start_newurl === -1) {
