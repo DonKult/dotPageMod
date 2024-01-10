@@ -19,7 +19,17 @@ const executePageMod = (tabId, runat, p) => {
 		s = browser.tabs.insertCSS(tabId, opt);
 	return s.then(
 		() => updateTabInfo(tabId, filename, UPDATE_TAB.GOOD),
-		() => updateTabInfo(tabId, filename, UPDATE_TAB.BAD)
+		(error) => {
+			let msg = error.toString();
+			if (!msg)
+				msg = 'Unknown error';
+			updateTabInfo(tabId, filename, UPDATE_TAB.BAD, msg);
+			browser.tabs.executeScript(tabId, {
+				'runAt': 'document_idle',
+				'code': 'console.error(' + JSON.stringify(msg) + ');' +
+					'\n/*# sourceURL=file://' + DOTPAGEMOD_PATH + '/' + filename + ' */\n',
+			});
+		}
 	);
 };
 const promiseRunOnCursor = (index, key, runon) => {

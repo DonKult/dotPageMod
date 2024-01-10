@@ -68,8 +68,11 @@ const updateFileListing = m => {
 							const li = document.createElement('li');
 							const link = document.createElement('a');
 							link.setAttribute('href', [m.baseuri,pack,host,file].join('/'));
-							if (m.files[[pack,host,file].join('/')] === false)
+							const filename = [pack,host,file].join('/');
+							if (m.files[filename].length !== 0) {
 								link.classList.add('failed');
+								link.setAttribute('title', m.files[filename]);
+							}
 							link.addEventListener('click', clickHandlerOpenEditor);
 							const text = document.createTextNode(file);
 							link.appendChild(text);

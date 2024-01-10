@@ -2,14 +2,15 @@
 
 let tabInfo = {};
 const UPDATE_TAB = { GOOD: '1', BAD: '2', REMOVE: '3' };
-const updateTabInfo = (tabId, file, type) => {
+const successful = (info) => info.length === 0;
+const updateTabInfo = (tabId, file, type, message) => {
 	if (file !== null) {
 		if (tabInfo[tabId] === undefined)
 			tabInfo[tabId] = {};
 		if (type === UPDATE_TAB.GOOD)
-			tabInfo[tabId][file] = true;
+			tabInfo[tabId][file] = '';
 		else if (type === UPDATE_TAB.BAD)
-			tabInfo[tabId][file] = false;
+			tabInfo[tabId][file] = message;
 		else if (type === UPDATE_TAB.REMOVE) {
 			if (file === "js") {
 				for (let f in tabInfo[tabId])
@@ -25,7 +26,7 @@ const updateTabInfo = (tabId, file, type) => {
 		if (tabInfo[tabId].hasOwnProperty(f)) {
 			++i;
 			if (allgood)
-				allgood = tabInfo[tabId][f];
+				allgood = successful(tabInfo[tabId][f]);
 		}
 	}
 	if (i === 0)
@@ -45,7 +46,7 @@ const tabInfoQuery = filename => {
 const isAlreadyInTab = (tabId, filename) => {
 	if (tabInfo.hasOwnProperty(tabId))
 		if (tabInfo[tabId].hasOwnProperty(filename))
-			return tabInfo[tabId][filename];
+			return successful(tabInfo[tabId][filename]);
 	return false;
 };
 const sendDetachMessageToTab = tab => {
