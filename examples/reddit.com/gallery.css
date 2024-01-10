@@ -1,0 +1,9 @@
+.expando-uninitialized .media-preview {
+	visibility: unset !important;
+}
+div.gallery-preview {
+	display: block !important;
+}
+ul.gallery-nav-bar {
+	display: none !important;
+}

@@ -17,3 +17,4 @@ forEach('img[data-srcset]', lazyloadingSrcSet('data-srcset'));
 forEach('img[data-lazy]', lazyloadingSrc('data-lazy'));
 forEach('img[data-lazy-src]', lazyloadingSrc('data-lazy-src'));
 forEach('img[data-original]', lazyloadingSrc('data-original'));
+forEach('img[data-pin-media]', lazyloadingSrc('data-pin-media'));

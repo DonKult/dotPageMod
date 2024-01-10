@@ -2,3 +2,7 @@
 {
 	opacity: 1 !important;
 }
+.content_warning_widget
+{
+	display: none;
+}
