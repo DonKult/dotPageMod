@@ -2,11 +2,24 @@
 
 const handleCatResult = r => db => {
 	let type;
-	if (r.filename.endsWith('.js'))
+	let runat;
+	if (r.filename.endsWith('.js')) {
 		type = 'js';
-	else if (r.filename.endsWith('.css'))
+		if (r.filename.endsWith('.start.js'))
+			runat = 'start';
+		else if (r.filename.endsWith('.idle.js'))
+			runat = 'idle';
+		else
+			runat = 'end';
+	} else if (r.filename.endsWith('.css')) {
 		type = 'css';
-	else
+		if (r.filename.endsWith('.end.css'))
+			runat = 'end';
+		else if (r.filename.endsWith('.idle.css'))
+			runat = 'idle';
+		else
+			runat = 'start';
+	} else
 		return Promise.resolve();
 	return new Promise((resolve, reject) => {
 		const filepath = DOTPAGEMOD_PATH + '/' + r.collection + '/' + r.hostname + '/' + r.filename;
@@ -20,7 +33,7 @@ const handleCatResult = r => db => {
 		}
 		suffix += '/*# sourceURL=file://' + filepath + ' */\n';
 		let req = db.transaction(['files'], 'readwrite').objectStore('files').put(makePageModFile(
-			r.collection, r.hostname, r.filename, type, r.lastmod,
+			r.collection, r.hostname, r.filename, type, runat, r.lastmod,
 			prefix + r.filecontent + suffix
 		));
 		req.onsuccess = e => resolve(registerPageModFile(db, e.target.result));

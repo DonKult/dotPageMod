@@ -14,12 +14,13 @@ const getDatabaseConnection = () => new Promise((resolve, reject) => {
 	};
 });
 
-const makePageModFile = (_collection, _hostname, _filename, _type, _lastmod, _content) => {
+const makePageModFile = (_collection, _hostname, _filename, _type, _runat, _lastmod, _content) => {
 	return {
 		"collection": _collection,
 		"hostname": _hostname,
 		"filename": _filename,
 		"type": _type,
+		"runat": _runat,
 		"lastmod": _lastmod,
 		"content": _content
 	};

@@ -17,6 +17,10 @@ to load local CSS and JavaScript from your dotfiles into webpages.
   JQuery) you might want to use in your scripts – they are automatically
   included before your scripts are sourced.
 * scripts can show desktop notifications without WebAPI (see Cheatsheet)
+* scripts are run in [readyState](https://developer.mozilla.org/en-US/docs/Web/API/Document/readyState)
+  `interactive` by default, but filenames ending in `.start.js` run
+  scripts in `loading` and `.idle.js` at `complete` instead
+  (see also [RunAt](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/extensionTypes/RunAt)).
 * your JavaScript/CSS works even if the page has them blocked by a _Content
   Security Policy_ or [uMatrix](https://github.com/gorhill/uMatrix)
 * your PageMods apply to the top window (not to frames) and apply to existing

@@ -6,8 +6,10 @@ const executePageMod = (tabId, runat, p) => {
 	const filename = p.collection + '/' + p.hostname + '/' + p.filename;
 	if (isAlreadyInTab(tabId, filename) === true)
 		return;
+	if (!runat)
+		runat = 'end';
 	const opt = {
-		'runAt': runat,
+		'runAt': 'document_' + runat,
 		'code': p.content,
 	};
 	let s;
@@ -89,13 +91,8 @@ const registerPageModFile = (db, key) => {
 				}
 			}
 			hostlistener[host] = executePageModsForHost(db, host,
-				(tabId, value) => executePageMod(tabId, 'document_start', value),
-				(tabId, value) => {
-					if (value.type === 'js')
-						return executePageMod(tabId, 'document_end', value);
-					else if (value.type === 'css')
-						return executePageMod(tabId, 'document_start', value);
-				}
+				(tabId, value) => executePageMod(tabId, 'start', value),
+				(tabId, value) => executePageMod(tabId, value.runat, value)
 			);
 			listeners.push(browser.webNavigation.onCommitted.addListener(
 				hostlistener[host], filters
